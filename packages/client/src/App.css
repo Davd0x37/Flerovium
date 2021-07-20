@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* #1C181D - background
+#F1F3F3 - primary
+#7C7C7D - secondary
+#767B80 - accent
+#7C7474 - ???
+
+#EBF0F4 - card / primary
+#909FD6 - icons?
+#7465D6 - icons / active nav
+#656A8A - text nav
+#201C33 - background
+
+#152D32
+#133F40
+#487262
+#B8C9BE
+#FAF1DD
+
+#D8DDBF - light shades - Use this color as the background for your dark-on-light designs, or the text color of an inverted design.
+#EA9759 - light accent - Accent colors can be used to bring attention to design elements by contrasting with the rest of the palette.
+#6FAF49 - main brand color - This color should be eye-catching but not harsh. It can be liberally applied to your layout as its main identity.
+#237F6A - dark accent - Another accent color to consider. Not all colors have to be used - sometimes a simple color scheme works best.
+#2F4A55 - dark shades - Use as the text color for dark-on-light designs, or as the background for inverted designs.
+
+#666677
+#552277
+#112233
+#009954 */

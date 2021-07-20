@@ -1,0 +1,35 @@
+{
+  "name": "@flerovium/electron",
+  "version": "0.0.1",
+  "description": "Electron backend",
+  "main": "dist/index.js",
+  "author": "David",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "electron:serve": "electron ../../build/electron/index.js",
+    "electron:serve:dev": "cross-env NODE_ENV=development electron ../../build/electron/index.js",
+    "dev": "cross-env NODE_ENV=development npm build && npm electron:serve:dev",
+    "prettier:format": "prettier --write src",
+    "prettier:lint": "prettier --check src",
+    "eslint:fix": "eslint --fix src",
+    "eslint:lint": "eslint src",
+    "test:jest": "jest",
+    "test:jest:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "@types/faker": "^5.5.6",
+    "@types/node": "^15.12.0",
+    "electron-is-dev": "^2.0.0",
+    "faker": "^5.5.3"
+  },
+  "dependencies": {
+    "@flerovium/shared": "^0.0.1",
+    "electron": "13.1.1",
+    "electron-reloader": "1.2.1"
+  }
+}
