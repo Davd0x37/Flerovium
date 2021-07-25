@@ -1,78 +1,78 @@
 <template>
-	<div>
-		<div class="my-5">
-			<v-button icon="las la-pen" @click="editService()">{{
-				$t('actions.edit')
-			}}</v-button>
-			<v-button
-				icon="las la-sync"
-				@click="serviceTask(ActionsEnum.REQUEST_DATA)"
-				>{{ $t('actions.refresh') }}</v-button
-			>
-			<v-button
-				icon="las la-atom"
-				v-if="!hasRequestedTokens && hasAccessToken"
-				@click="serviceTask(ActionsEnum.REQUEST_TOKENS)"
-				>{{ $t('actions.requestTokens') }}</v-button
-			>
-			<v-button
-				icon="las la-atom"
-				v-if="!hasRequestedTokens && !hasAccessToken"
-				@click="serviceTask(ActionsEnum.AUTHENTICATE_SERVICE)"
-				>{{ $t('actions.authenticate') }}</v-button
-			>
-			<v-button icon="las la-trash" @click="deleteService()">{{
-				$t('actions.delete')
-			}}</v-button>
-		</div>
+	<div class="my-5">
+		<v-button icon="las la-pen" @click="editService()">{{
+			$t('actions.edit')
+		}}</v-button>
 
-		<v-tabs>
-			<v-tab :title="$t('services.data')">
-				<div class="flex flex-col flex-wrap">
-					<div v-for="val in service.data" :key="val.label" class="flex flex-row">
-						<v-label
-							:label="val.label"
-							:important="val.isImportant"
-							:color="service.config.color"
-							class="py-2.5 w-96"
-							>{{ val.detail }}</v-label
-						>
-						<!-- @TODO: Make custom checkbox -->
-						{{ val.isEnabled }}
-						<v-input
-							type="checkbox"
-							:title="
-								$t(val.isEnabled ? 'form.enabledOption' : 'form.disabledOption', {
-									option: val.label,
-								})
-							"
-							v-model="val.isEnabled"
-						></v-input>
-					</div>
-				</div>
-			</v-tab>
+		<v-button icon="las la-sync" @click="serviceTask(ActionsEnum.REQUEST_DATA)">{{
+			$t('actions.refresh')
+		}}</v-button>
 
-			<v-tab :title="$t('services.information')">
-				<div
-					v-for="(val, name) in service.auth.credentials"
-					:key="name"
-					class="flex flex-row flex-wrap"
-				>
-					<v-label :label="name" class="py-2.5">{{ val }}</v-label>
-				</div>
-			</v-tab>
+		<v-button
+			icon="las la-atom"
+			v-if="!hasRequestedTokens && hasAccessToken"
+			@click="serviceTask(ActionsEnum.REQUEST_TOKENS)"
+			>{{ $t('actions.requestTokens') }}</v-button
+		>
 
-			<v-tab :title="$t('services.dataPaths')">
-				<div>
-					<json-editor
-						v-model="service.dataPaths"
-						mode="view"
-						:title="$t('services.dataPaths')"
-					></json-editor>
-				</div>
-			</v-tab>
-		</v-tabs>
+		<v-button
+			icon="las la-atom"
+			v-if="!hasRequestedTokens && !hasAccessToken"
+			@click="serviceTask(ActionsEnum.AUTHENTICATE_SERVICE)"
+			>{{ $t('actions.authenticate') }}</v-button
+		>
+
+		<v-button icon="las la-trash" @click="deleteService()">{{
+			$t('actions.delete')
+		}}</v-button>
 	</div>
+
+	<v-tabs>
+		<v-tab :title="$t('services.data')">
+			<div class="flex flex-col flex-wrap">
+				<div v-for="val in service.data" :key="val.label" class="flex flex-row">
+					<v-label
+						:label="val.label"
+						:important="val.isImportant"
+						:color="service.config.color"
+						class="py-2.5 w-96"
+						>{{ val.detail }}</v-label
+					>
+					<!-- @TODO: Make custom checkbox -->
+					{{ val.isEnabled }}
+					<v-input
+						type="checkbox"
+						:title="
+							$t(val.isEnabled ? 'form.enabledOption' : 'form.disabledOption', {
+								option: val.label,
+							})
+						"
+						v-model="val.isEnabled"
+					></v-input>
+				</div>
+			</div>
+		</v-tab>
+
+		<v-tab :title="$t('services.information')">
+			<div
+				v-for="(val, name) in service.auth.credentials"
+				:key="name"
+				class="flex flex-row flex-wrap"
+			>
+				<v-label :label="name" class="py-2.5">{{ val }}</v-label>
+			</div>
+		</v-tab>
+
+		<v-tab :title="$t('services.dataPaths')">
+			<div>
+				<json-editor
+					v-model="service.dataPaths"
+					mode="view"
+					:title="$t('services.dataPaths')"
+				></json-editor>
+			</div>
+		</v-tab>
+	</v-tabs>
 </template>
 
 <script lang="ts">
@@ -132,9 +132,9 @@ export default defineComponent({
 
 		hasAccessToken() {
 			// @ts-ignore
-			const { accessToken, code } = this.service.auth.tokens;
+			const tokens = this.service.auth.tokens;
 
-			return !!accessToken || !!code;
+			return !!tokens?.accessToken || !!tokens?.code;
 		},
 	},
 

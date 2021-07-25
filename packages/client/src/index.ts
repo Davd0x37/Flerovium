@@ -17,8 +17,8 @@ import store from './store';
 const app = createApp(App);
 
 app.mixin(mixins);
-app.use(router);
 app.use(store);
+app.use(router);
 app.use(i18n);
 
 app.mount('#app');

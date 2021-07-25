@@ -1,12 +1,10 @@
 <template>
-	<div>
-		<div v-if="$route.name == $options.name">
-			<v-button icon="las la-sync" @click="refresh">{{
-				$t('actions.refresh')
-			}}</v-button>
-		</div>
-		<router-view :key="$route.fullPath" v-else />
+	<div v-if="$route.name == $options.name">
+		<v-button icon="las la-sync" @click="refresh">{{
+			$t('actions.refresh')
+		}}</v-button>
 	</div>
+	<router-view :key="$route.fullPath" v-else />
 </template>
 
 <script lang="ts">

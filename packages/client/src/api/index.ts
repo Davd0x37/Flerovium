@@ -70,6 +70,11 @@ export const $api = {
 				auth: { tokens },
 				dataPaths,
 			} = service;
+
+			if (!Array.isArray(dataPaths)) {
+				throw new Error('Data paths must be array');
+			}
+
 			// @FIXME: don't use ! - fix this
 			const accessToken = tokens.accessToken!;
 			const tokenType = tokens.tokenType!;

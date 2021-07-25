@@ -1,15 +1,5 @@
 <template>
-	<div
-		class="
-			w-72
-			py-0
-			px-2
-			flex flex-col
-			justify-between
-			text-secondary
-			dark:text-primary
-		"
-	>
+	<div class="w-72 px-2 h-full">
 		<div id="menu">
 			<div v-for="item in paths()" :key="item.title" :to="item.path">
 				<div class="flex items-end flex-row">

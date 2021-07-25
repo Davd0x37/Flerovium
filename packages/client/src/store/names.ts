@@ -9,9 +9,10 @@ import {
 } from './modules/services/names';
 
 export const ACTIONS = {
-	SET_INITIALIZED: 'setInitialized',
+	SET_AUTHENTICATED: 'setAuthenticated',
 	TOGGLE_DARK_MODE: 'toggleDarkMode',
 	CHANGE_LANGUAGE: 'changeLanguage',
+	CREATE_VAULT: 'createVault',
 
 	RESET_STORE: 'resetStore',
 
@@ -21,7 +22,7 @@ export const ACTIONS = {
 
 export const GETTERS = {
 	VAULT_NAME: 'vaultName',
-	IS_INITIALIZED: 'isInitialized',
+	IS_AUTHENTICATED: 'isAuthenticated',
 	DARK_MODE: 'darkMode',
 	LANGUAGE: 'language',
 	VAULT: 'vault',

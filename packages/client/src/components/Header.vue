@@ -37,22 +37,22 @@
 			/>
 		</div>
 		<div class="flex flex-row">
-			<!-- <div class="w-full h-10 flex items-center justify-center" @click="logout">
+			<div class="w-full h-10 flex items-center justify-center" @click="logout">
 				<i class="las la-lg la-sign-out-alt pr-5"></i>
 				<p>
 					{{ $t('actions.logout') }}
 				</p>
-			</div> -->
+			</div>
 			<locale-changer></locale-changer>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
 import VButton from '@/components/common/VButton.vue';
 import LocaleChanger from './LocaleChanger.vue';
-import { GETTERS } from '@/store/names';
+import { ACTIONS, GETTERS } from '@/store/names';
 
 export default defineComponent({
 	name: 'Header',
@@ -70,6 +70,13 @@ export default defineComponent({
 			search: '',
 			vaultName: '',
 		};
+	},
+
+	methods: {
+		logout() {
+			this.$store.dispatch(ACTIONS.SET_AUTHENTICATED, false);
+			this.$router.push({ name: 'WelcomeDefault' });
+		},
 	},
 });
 </script>

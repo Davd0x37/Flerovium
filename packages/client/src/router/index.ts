@@ -4,8 +4,7 @@ import Authorize from '@/pages/Authorize.vue';
 import checkAuth from '@/middlewares/checkAuth';
 import profile from './profile';
 import services from './services';
-
-const isAuthenticated = true;
+import welcome from './welcome';
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -31,6 +30,7 @@ const routes: Array<RouteRecordRaw> = [
 	},
 	...profile,
 	...services,
+	...welcome
 ];
 
 const router = createRouter({
@@ -40,29 +40,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-	checkAuth(next, isAuthenticated);
+	checkAuth(to, from, next);
 
-	// if (to.meta.isPlaceholder) {
-	// 	console.log(to, from);
-	// 	next(false);
-	// } else {
-	// 	next(false);
-	// }
 });
-
-// router.beforeEach((to, from, next) => {
-// 	if (to.matched.some((record) => record.meta.conditionalRoute)) {
-// 		// this route requires condition/permission to be accessed
-// 		if (!checkCondition) {
-// 			//check condition is false
-// 			next({ path: '/' });
-// 		} else {
-// 			//check condition is true
-// 			next();
-// 		}
-// 	} else {
-// 		next(); // Don't forget next
-// 	}
-// });
 
 export default router;

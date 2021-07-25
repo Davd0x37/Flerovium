@@ -7,10 +7,15 @@
 			'flex flex-col w-full lg:w-80 2xl:w-96 pb-5 px-5',
 		]"
 	>
-		<!-- <div class="flex flex-col"> -->
 		<label :for="title">{{ title }}</label>
-		<input v-model="value" @blur="v$.value.$touch" :type="type" :id="title" />
-		<!-- </div> -->
+		<input
+			v-model="value"
+			@blur="v$.value.$touch"
+			:type="type"
+			:id="title"
+			class="text-secondary"
+		/>
+
 		<div class="input-errors" v-for="error of v$.value.$errors" :key="error.$uid">
 			<div class="text-danger pt-2.5 font-bold">{{ error.$message }}</div>
 		</div>

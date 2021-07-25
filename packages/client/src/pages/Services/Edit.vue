@@ -1,6 +1,7 @@
 <template>
 	<div class="flex flex-col w-full">
 		<v-label
+			v-if="isParamsSet()"
 			class="py-2.5"
 			size_content="text-3xl"
 			:label="$t('labels.name')"
@@ -8,9 +9,18 @@
 			:color="service.config.color"
 			>{{ service.name }}</v-label
 		>
-		<v-label class="py-2.5" :label="$t('labels.id')">{{ service.$id }}</v-label>
+		<v-label v-if="isParamsSet()" class="py-2.5" :label="$t('labels.id')">{{
+			service.$id
+		}}</v-label>
 
 		<div class="flex flex-wrap">
+			<v-input
+				v-if="!isParamsSet()"
+				v-model="service.name"
+				:title="$t('labels.name')"
+				required
+			/>
+
 			<v-input
 				v-model="service.config.icon"
 				:title="$t('labels.logoIcon')"
@@ -108,6 +118,43 @@ export default defineComponent({
 		if (this.isParamsSet()) {
 			const serviceName = this.$route.params.name;
 			this.service = this.$store.getters[GETTERS.GET_SERVICE](serviceName, true);
+		} else {
+			// @FIXME: remove any and make implement it properly
+			this.service = {
+				name: '',
+				config: {
+					icon: '',
+					color: '',
+					isEnabled: true,
+				},
+				auth: {
+					credentials: {
+						clientId: '',
+						clientSecret: '',
+						authorizationUri: '',
+						tokenEndpointUri: '',
+						scope: '',
+					},
+				},
+				dataPaths: [
+					{
+						name: 'path name',
+						path: 'path',
+						select: [
+							{
+								label: 'Verifired',
+								detail: 'verified',
+								isImportant: true,
+								isEnabled: true,
+								matcher: {
+									true: 'Yes',
+									false: 'No',
+								},
+							},
+						],
+					},
+				],
+			} as any;
 		}
 	},
 

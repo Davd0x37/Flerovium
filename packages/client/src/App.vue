@@ -1,6 +1,5 @@
 <template>
 	<div :class="darkMode ? 'dark' : ''">
-		<notification></notification>
 		<div
 			class="
 				bg-primary
@@ -9,38 +8,47 @@
 				dark:text-primary
 				font-display
 				flex flex-col
+				h-full
 				min-h-screen min-w-min
 			"
 		>
-			<Header />
-			<div class="h-full flex flex-grow">
-				<Sidebar />
-				<Content />
-			</div>
+			<component :is="layout"></component>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Header from '@/components/Header.vue';
-import Sidebar from '@/components/Sidebar.vue';
-import Content from '@/components/Content.vue';
-import Notification from '@/components/Notification.vue';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+import WelcomeLayout from '@/layouts/WelcomeLayout.vue';
 import { GETTERS } from './store/names';
 
 export default defineComponent({
 	name: 'App',
 
 	components: {
-		Header,
-		Sidebar,
-		Content,
-		Notification,
+		DefaultLayout,
+		WelcomeLayout,
+	},
+
+	data() {
+		return {
+			layout: null,
+		};
+	},
+
+	watch: {
+		$route(to) {
+			if (to.meta.layout !== undefined) {
+				this.layout = to.meta.layout;
+			} else {
+				this.layout = 'DefaultLayout';
+			}
+		},
 	},
 
 	computed: {
-		darkMode(): any {
+		darkMode(): boolean {
 			return this.$store.getters[GETTERS.DARK_MODE];
 		},
 	},

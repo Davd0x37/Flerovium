@@ -1,6 +1,7 @@
 export interface RootState {
-	vaultName: string;
+	name: string;
 	darkMode: boolean;
 	lang: string;
-	isInitialized: boolean;
+	isAuthenticated: boolean;
+	passwordHash: string;
 }

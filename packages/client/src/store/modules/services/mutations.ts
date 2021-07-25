@@ -45,6 +45,12 @@ const mutationsBase: MutationTree<ServiceState> = {
 		};
 	},
 
+	[ACTIONS.RESTORE_SERVICES](state, services: ServiceState['list']) {
+		state.list = {
+			...services,
+		};
+	},
+
 	[ACTIONS.UPDATE_TOKENS](
 		state,
 		{

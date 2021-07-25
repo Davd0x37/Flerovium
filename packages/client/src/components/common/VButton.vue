@@ -1,15 +1,11 @@
 <template>
 	<button
-		class="
-			text-secondary
-			dark:text-primary
-			border
-			rounded
-			p-2.5
-			mx-5
-			bg-primary
-			dark:bg-secondary
-		"
+		:class="[
+			'border rounded p-2.5 mx-5',
+			inversed
+				? 'dark:text-secondary text-primary dark:bg-primary bg-secondary'
+				: 'text-secondary dark:text-primary bg-primary dark:bg-secondary',
+		]"
 	>
 		<v-icon class="pr-2.5" :icon="icon" v-if="icon" />
 		<slot></slot>
@@ -29,6 +25,7 @@ export default defineComponent({
 
 	props: {
 		icon: { type: String, required: false },
+		inversed: { type: Boolean, required: false, default: false },
 	},
 });
 </script>

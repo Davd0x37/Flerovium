@@ -10,7 +10,7 @@ export default defineComponent({
 
 	props: {
 		size: { type: String, default: 'la-lg', required: false },
-		icon: { type: String, default: 'las la-sync', required: false },
+		icon: { type: String, default: 'las la-sync', required: true },
 	},
 });
 </script>
