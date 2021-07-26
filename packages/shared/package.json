@@ -19,7 +19,7 @@
 	],
 	"scripts": {
 		"build": "rollup -c rollup.config.js",
-    "build:prod": "npm run eslint:fix && npm run prettier:format && npm run build",
+		"build:prod": "rimraf lib && npm run eslint:fix && npm run prettier:format && npm run build",
 		"prettier:format": "prettier --write src",
 		"prettier:lint": "prettier --check src",
 		"eslint:fix": "eslint --fix src",
@@ -31,7 +31,8 @@
 	},
 	"dependencies": {
 		"argon2": "^0.28.1",
-		"argon2-browser": "^1.18.0"
+		"argon2-browser": "^1.18.0",
+		"buffer": "6.0.3"
 	},
 	"devDependencies": {
 		"@esm-bundle/chai": "^4.3.4",

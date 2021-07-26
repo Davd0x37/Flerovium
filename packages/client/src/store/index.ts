@@ -2,6 +2,8 @@
 import { createStore } from 'vuex';
 
 import vuexPersist from '@/plugins/vuexPersist';
+
+import builtinServices from '@/common/builtinServices';
 import modules from './modules';
 import { RootState } from './types';
 import { ACTIONS, GETTERS } from './names';
@@ -17,7 +19,10 @@ export default createStore<RootState>({
 			isAuthenticated: false,
 			lang: 'en',
 			darkMode: true,
-			passwordHash: '',
+			encryption: {
+				passwordHash: '',
+				salt: '',
+			},
 		};
 	},
 
@@ -49,21 +54,14 @@ export default createStore<RootState>({
 		[ACTIONS.CHANGE_LANGUAGE](state, lang: string) {
 			state.lang = lang;
 		},
-		[ACTIONS.RESET_STORE](state) {
-			state.name = 'Haven';
-			state.isAuthenticated = false;
-			state.lang = 'pl';
-			state.darkMode = true;
-			state.passwordHash = '';
-		},
 		[ACTIONS.CREATE_VAULT](
 			state,
-			payload: Pick<RootState, 'name' | 'lang' | 'darkMode' | 'passwordHash'>,
+			payload: Pick<RootState, 'name' | 'lang' | 'darkMode' | 'encryption'>,
 		) {
 			state.name = payload.name || state.name;
 			state.lang = payload.lang || state.lang;
-			state.darkMode = payload.darkMode || state.darkMode;
-			state.passwordHash = payload.passwordHash || state.passwordHash;
+			state.darkMode = payload.darkMode ?? state.darkMode;
+			state.encryption = payload.encryption || state.encryption;
 		},
 	},
 
@@ -77,19 +75,20 @@ export default createStore<RootState>({
 		[ACTIONS.CHANGE_LANGUAGE]({ commit }, lang: string) {
 			commit(ACTIONS.CHANGE_LANGUAGE, lang);
 		},
-		[ACTIONS.RESET_STORE]({ commit }) {
-			commit(ACTIONS.RESET_STORE);
-			commit(ACTIONS.RESET_STORE_SERVICES);
-			commit(ACTIONS.RESET_STORE_NOTIFICATION);
-		},
 		[ACTIONS.CREATE_VAULT](
 			{ commit },
-			payload: Pick<RootState, 'name' | 'lang' | 'darkMode' | 'passwordHash'> & {
+			payload: Pick<RootState, 'name' | 'lang' | 'darkMode' | 'encryption'> & {
 				services: ServiceState;
+				useBuiltin: boolean;
 			},
 		) {
 			commit(ACTIONS.CREATE_VAULT, payload);
 			commit(ACTIONS.SET_AUTHENTICATED, true);
+
+			if (payload.useBuiltin) {
+				commit(ACTIONS.RESTORE_SERVICES, builtinServices);
+			}
+
 			if (payload.services !== undefined) {
 				commit(ACTIONS.RESTORE_SERVICES, payload.services.list);
 			}

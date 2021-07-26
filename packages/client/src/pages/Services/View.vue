@@ -124,13 +124,13 @@ export default defineComponent({
 	},
 
 	computed: {
-		hasRequestedTokens() {
+		hasRequestedTokens: function (): boolean {
 			// @TODO: computed properties cannot see what is in data?
 			// @ts-ignore
 			return this.service.auth.hasRequestedTokens;
 		},
 
-		hasAccessToken() {
+		hasAccessToken: function (): boolean {
 			// @ts-ignore
 			const tokens = this.service.auth.tokens;
 
@@ -139,7 +139,7 @@ export default defineComponent({
 	},
 
 	methods: {
-		editService() {
+		editService(): void {
 			this.$router.push({
 				name: 'ServicesEdit',
 				params: {
@@ -148,14 +148,14 @@ export default defineComponent({
 			});
 		},
 
-		deleteService() {
+		deleteService(): void {
 			this.$store.dispatch(ACTIONS.DELETE_SERVICE, this.service.name);
 			this.$router.push({
 				name: 'ServicesDefault',
 			});
 		},
 
-		async serviceTask(taskNum: AuthenticationActionEnum) {
+		async serviceTask(taskNum: AuthenticationActionEnum): Promise<void> {
 			switch (taskNum) {
 				case AuthenticationActionEnum.REQUEST_DATA: {
 					await runRequestData(this.service);

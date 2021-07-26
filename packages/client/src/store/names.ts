@@ -14,8 +14,6 @@ export const ACTIONS = {
 	CHANGE_LANGUAGE: 'changeLanguage',
 	CREATE_VAULT: 'createVault',
 
-	RESET_STORE: 'resetStore',
-
 	...NOTIFACTIONS,
 	...SERVACTIONS,
 };

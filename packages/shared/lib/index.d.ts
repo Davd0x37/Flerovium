@@ -18,20 +18,20 @@
  * @TODO: Maybe change `content` string type to typed array?
  *
  * @export
- * @param {string} content Everything can be passed, just convert it to string
+ * @param {Uint8Array} content Everything can be passed, just convert it to Uint8Array
  * @param {string} password
  * @return {*}  {Promise<Uint8Array>} Encrypted content
  */
-declare function encrypt(content: string, password: string): Promise<Uint8Array>;
+declare function encrypt(content: Uint8Array, password: string): Promise<Uint8Array>;
 /**
  * Decrypt content using master password
  *
  * @export
  * @param {Uint8Array} encrypted Encrypted content, saved in Uint8Array
  * @param {string} password
- * @return {*}  {Promise<string>} Decrypted content
+ * @return {*}  {Promise<Uint8Array>} Decrypted content
  */
-declare function decrypt(encrypted: Uint8Array, password: string): Promise<string>;
+declare function decrypt(encrypted: Uint8Array, password: string): Promise<Uint8Array>;
 
 /**
  * Initialization vector length
@@ -62,7 +62,7 @@ declare const str2ab: (str: string) => ArrayBuffer;
  * @param {ArrayBuffer} ab
  * @return {*}  {string} Decoded array
  */
-declare const ab2str: (ab: ArrayBuffer) => string;
+declare const ab2str: (ab: ArrayBuffer, encoding?: string) => string;
 /**
  * Get CryptoKey from password string
  *
@@ -110,18 +110,21 @@ declare const functions: {
          *
          * @export
          * @param {string} input
-         * @return {*}  {(Promise<Argon2HashResult | null>)}
+         * @param {string} [saltNew]
+         * @return {*}  {(Promise<(Argon2HashResult & { salt: string })>)}
          */
-        hash(input: string): Promise<Argon2HashResult | null>;
+        hash(input: string, saltNew?: string | undefined): Promise<Argon2HashResult & {
+            salt: string;
+        }>;
         /**
          * Compare input with encoded hash
          *
          * @export
          * @param {string} input
          * @param {(string | Uint8Array)} encodedHash
-         * @return {*}  {(Promise<boolean | null>)}
+         * @return {*}  {(Promise<boolean>)}
          */
-        verify(input: string, encodedHash: string | Uint8Array): Promise<boolean | null>;
+        verify(input: string, encodedHash: string | Uint8Array): Promise<boolean>;
     };
 };
 

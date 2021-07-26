@@ -5,8 +5,6 @@ export const ACTIONS = {
 	RESTORE_SERVICES: 'services/restoreServices',
 	UPDATE_TOKENS: 'services/updateTokens',
 	TOGGLE_REQUESTED_TOKENS: 'services/toggleRequestedTokens',
-
-	RESET_STORE_SERVICES: 'services/resetStoreServices',
 };
 
 export const GETTERS = {

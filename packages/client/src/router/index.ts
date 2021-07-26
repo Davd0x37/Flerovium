@@ -1,6 +1,6 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
 import Home from '@/pages/Home.vue';
-import Authorize from '@/pages/Authorize.vue';
+// import Authorize from '@/pages/Authorize.vue';
 import checkAuth from '@/middlewares/checkAuth';
 import profile from './profile';
 import services from './services';
@@ -19,18 +19,20 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/authorize',
 		name: 'ServiceAuthorize',
-		component: Authorize,
+		// component: Authorize,
+		component: () => import('@/pages/Authorize.vue'),
 		children: [
 			{
 				path: ':name',
 				name: 'ServiceAuth',
-				component: Authorize,
+				// component: Authorize,
+				component: () => import('@/pages/Authorize.vue'),
 			},
 		],
 	},
 	...profile,
 	...services,
-	...welcome
+	...welcome,
 ];
 
 const router = createRouter({
@@ -41,7 +43,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
 	checkAuth(to, from, next);
-
 });
 
 export default router;

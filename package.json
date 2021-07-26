@@ -11,8 +11,8 @@
     ]
   },
   "scripts": {
-    "build": "npm run build:common && npm run build:client",
-    "build:prod": "npm run build:common:prod && npm run build:client:prod",
+    "build": "rimraf build && npm run build:common && npm run build:client",
+    "build:prod": "rimraf build && npm run build:common:prod && npm run build:client:prod",
     "build:common": "lerna run build --scope=@flerovium/shared --stream",
     "build:client": "lerna run build --scope=@flerovium/client --scope=@flerovium/electron --stream",
     "build:common:prod": "lerna run build:prod --scope=@flerovium/shared --stream",

@@ -26,6 +26,7 @@
     "@vuelidate/core": "^2.0.0-alpha.19",
     "@vuelidate/validators": "^2.0.0-alpha.16",
     "axios": "^0.21.1",
+    "buffer": "6.0.3",
     "es6-promise": "^4.2.8",
     "faker": "^5.5.3",
     "jsoneditor": "^9.5.0",

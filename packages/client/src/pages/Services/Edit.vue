@@ -119,7 +119,7 @@ export default defineComponent({
 			const serviceName = this.$route.params.name;
 			this.service = this.$store.getters[GETTERS.GET_SERVICE](serviceName, true);
 		} else {
-			// @FIXME: remove any and make implement it properly
+			// @FIXME: remove 'any' and implement it properly
 			this.service = {
 				name: '',
 				config: {

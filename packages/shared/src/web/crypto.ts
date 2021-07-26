@@ -14,13 +14,7 @@
  * 3. Encrypt
  */
 
-import {
-	str2ab,
-	ab2str,
-	getRandomValues,
-	importKey,
-	deriveKey,
-} from './helpers';
+import { getRandomValues, importKey, deriveKey } from './helpers';
 import { IV_LEN } from './consts';
 
 /**
@@ -28,20 +22,17 @@ import { IV_LEN } from './consts';
  * @TODO: Maybe change `content` string type to typed array?
  *
  * @export
- * @param {string} content Everything can be passed, just convert it to string
+ * @param {Uint8Array} content Everything can be passed, just convert it to Uint8Array
  * @param {string} password
  * @return {*}  {Promise<Uint8Array>} Encrypted content
  */
 export async function encrypt(
-	content: string,
+	content: Uint8Array,
 	password: string,
 ): Promise<Uint8Array> {
 	// Generate IV and salt
 	const iv = getRandomValues(IV_LEN);
 	const salt = getRandomValues(IV_LEN);
-
-	// Convert content to Uint8Array
-	const data = str2ab(content);
 
 	// Get CryptoKey from password
 	const importedKey = await importKey(password);
@@ -54,7 +45,7 @@ export async function encrypt(
 			iv,
 		},
 		derivedKey,
-		data,
+		content,
 	);
 
 	// Convert arraybuffer to Uint8Array
@@ -74,12 +65,12 @@ export async function encrypt(
  * @export
  * @param {Uint8Array} encrypted Encrypted content, saved in Uint8Array
  * @param {string} password
- * @return {*}  {Promise<string>} Decrypted content
+ * @return {*}  {Promise<Uint8Array>} Decrypted content
  */
 export async function decrypt(
 	encrypted: Uint8Array,
 	password: string,
-): Promise<string> {
+): Promise<Uint8Array> {
 	const [iv, salt, data] = [
 		encrypted.slice(0, IV_LEN),
 		encrypted.slice(IV_LEN, IV_LEN * 2),
@@ -98,5 +89,5 @@ export async function decrypt(
 
 	const decrypted = new Uint8Array(arrayBuffer);
 
-	return ab2str(decrypted);
+	return decrypted;
 }

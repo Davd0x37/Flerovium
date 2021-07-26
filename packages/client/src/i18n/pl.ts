@@ -39,6 +39,10 @@ export default {
 		disable: 'Wyłącz',
 		enabledOption: 'Włączono: {option}',
 		disabledOption: 'Wyłączono: {option}',
+		useBuiltin: 'Użyj wbudowanych serwisów',
+		vaultName: 'Nazwa schowka',
+		password: 'Hasło',
+		repeatPassword: 'Powtórz hasło',
 	},
 	popup: {
 		receivedData: {

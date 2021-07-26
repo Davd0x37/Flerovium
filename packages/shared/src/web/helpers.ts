@@ -85,7 +85,9 @@ export const base64url = (buffer: ArrayBuffer): string => {
  * @return {*}  {ArrayBuffer} Encoded string
  */
 export const str2ab = (str: string): ArrayBuffer => {
-	return new TextEncoder().encode(str);
+	const encoder = new TextEncoder();
+
+	return encoder.encode(str);
 };
 
 /**
@@ -94,8 +96,8 @@ export const str2ab = (str: string): ArrayBuffer => {
  * @param {ArrayBuffer} ab
  * @return {*}  {string} Decoded array
  */
-export const ab2str = (ab: ArrayBuffer): string => {
-	return new TextDecoder('utf-8').decode(ab);
+export const ab2str = (ab: ArrayBuffer, encoding = 'utf-8'): string => {
+	return new TextDecoder(encoding).decode(ab);
 };
 
 /**
@@ -134,9 +136,9 @@ export const deriveKey = (
 		key,
 		{
 			name: 'AES-GCM',
-			length: 128,
+			length: 256,
 		},
-		true,
+		false,
 		['encrypt', 'decrypt'],
 	);
 };

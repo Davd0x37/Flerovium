@@ -39,6 +39,10 @@ export default {
 		disable: 'Disable',
 		enabledOption: 'Enabled: {option}',
 		disabledOption: 'Disabled: {option}',
+		useBuiltin: 'Use builtin services',
+		vaultName: 'Vault name',
+		password: 'Password',
+		repeatPassword: 'Repeat password',
 	},
 	popup: {
 		receivedData: {

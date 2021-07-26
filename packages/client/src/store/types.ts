@@ -3,5 +3,8 @@ export interface RootState {
 	darkMode: boolean;
 	lang: string;
 	isAuthenticated: boolean;
-	passwordHash: string;
+	encryption: {
+		passwordHash: string;
+		salt: string;
+	};
 }

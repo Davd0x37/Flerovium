@@ -1,4 +1,5 @@
 import argon2browser from 'argon2-browser/dist/argon2-bundled.min.js';
+import { Buffer } from 'buffer';
 
 const getRandomValues = (length) => {
   const arr = new Uint8Array(length);
@@ -28,10 +29,11 @@ const base64url = (buffer) => {
   return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 };
 const str2ab = (str) => {
-  return new TextEncoder().encode(str);
+  const encoder = new TextEncoder();
+  return encoder.encode(str);
 };
-const ab2str = (ab) => {
-  return new TextDecoder("utf-8").decode(ab);
+const ab2str = (ab, encoding = "utf-8") => {
+  return new TextDecoder(encoding).decode(ab);
 };
 const importKey = (key) => {
   const baseKey = str2ab(key);
@@ -49,8 +51,8 @@ const deriveKey = (key, salt) => {
     }
   }, key, {
     name: "AES-GCM",
-    length: 128
-  }, true, ["encrypt", "decrypt"]);
+    length: 256
+  }, false, ["encrypt", "decrypt"]);
 };
 
 const IV_LEN = 16;
@@ -58,13 +60,12 @@ const IV_LEN = 16;
 async function encrypt(content, password) {
   const iv = getRandomValues(IV_LEN);
   const salt = getRandomValues(IV_LEN);
-  const data = str2ab(content);
   const importedKey = await importKey(password);
   const derivedKey = await deriveKey(importedKey, salt);
   const arrayBuffer = await window.crypto.subtle.encrypt({
     name: "AES-GCM",
     iv
-  }, derivedKey, data);
+  }, derivedKey, content);
   const encrypted = new Uint8Array(arrayBuffer);
   const abIVData = new Uint8Array(new ArrayBuffer(IV_LEN * 2 + encrypted.length));
   abIVData.set(iv);
@@ -85,7 +86,7 @@ async function decrypt(encrypted, password) {
     iv
   }, derivedKey, data);
   const decrypted = new Uint8Array(arrayBuffer);
-  return ab2str(decrypted);
+  return decrypted;
 }
 
 const functions = {
@@ -114,9 +115,9 @@ const functions = {
     }
   },
   Argon2: {
-    async hash(input) {
+    async hash(input, saltNew) {
       try {
-        const salt = getRandomValues(IV_LEN);
+        const salt = saltNew || Buffer.from(getRandomValues(IV_LEN)).toString("hex");
         const req = await argon2browser.hash({
           pass: input,
           salt,
@@ -127,11 +128,11 @@ const functions = {
         return {
           hash: req.hash,
           hashHex: req.hashHex,
-          encoded: req.encoded
+          encoded: req.encoded,
+          salt
         };
       } catch (error) {
-        console.error(`[CRYPTO_HASH] Hashing error #${error.code}: ${error.message}`);
-        return null;
+        throw new Error(`[CRYPTO_HASH] Hashing error #${error.code}: ${error.message}`);
       }
     },
     async verify(input, encodedHash) {
@@ -143,8 +144,7 @@ const functions = {
         });
         return !!req;
       } catch (error) {
-        console.error(`[CRYPTO_HASH] Hash verifying error #${error.code}: ${error.message}`);
-        return null;
+        throw new Error(`[CRYPTO_HASH] Hash verifying error #${error.code}: ${error.message}`);
       }
     }
   }

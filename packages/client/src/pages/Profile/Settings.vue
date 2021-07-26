@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<v-button @click="theme">{{ $t('actions.changeTheme') }}</v-button>
-		<v-button @click="clear">{{ $t('actions.clearStore') }}</v-button>
 		<v-button @click="save">{{ $t('actions.save') }}</v-button>
 
 		<a href="#" ref="download" v-show="false">download</a>
@@ -12,8 +11,7 @@
 import { defineComponent } from 'vue';
 import VButton from '@/components/common/VButton.vue';
 import { ACTIONS, GETTERS } from '@/store/names';
-import { generateDownloadUrl } from '@/api/fs';
-import { RootState } from '@/store/types';
+import { downloadVault, openVault } from '@/api/actions';
 
 export default defineComponent({
 	name: 'ProfileSettings',
@@ -25,21 +23,17 @@ export default defineComponent({
 			this.$store.dispatch(ACTIONS.TOGGLE_DARK_MODE);
 		},
 
-		clear() {
-			this.$store.dispatch(ACTIONS.RESET_STORE);
-		},
-
 		async save() {
 			try {
-				const data: RootState['vault'] = await this.$store.getters[GETTERS.VAULT];
-				const payload = JSON.stringify(data);
 				const link = this.$refs.download as HTMLAnchorElement;
-				const url = generateDownloadUrl(payload);
+				const vault = this.$store.getters[GETTERS.VAULT];
+				const { url, name } = await downloadVault(vault);
 
 				link.href = url;
-				link.download = `${data.name}-encrypted.json`;
+				link.download = `${name}-encrypted.json`;
 				link.click();
 			} catch (error) {
+				console.error(error);
 				this.$notification.show({
 					mode: 'error',
 					title: 'Error while exporting vault',

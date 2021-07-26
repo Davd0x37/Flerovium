@@ -33,7 +33,7 @@ export default defineComponent({
 
 	data() {
 		return {
-			layout: null,
+			layout: '',
 		};
 	},
 

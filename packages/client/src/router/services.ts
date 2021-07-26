@@ -1,13 +1,14 @@
 import { RouteRecordRaw } from 'vue-router';
-import ServicesDefault from '@/pages/Services/Default.vue';
-import ServicesView from '@/pages/Services/View.vue';
-import ServicesEdit from '@/pages/Services/Edit.vue';
+// import ServicesDefault from '@/pages/Services/Default.vue';
+// import ServicesView from '@/pages/Services/View.vue';
+// import ServicesEdit from '@/pages/Services/Edit.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/services',
 		name: 'ServicesDefault',
-		component: ServicesDefault,
+		// component: ServicesDefault,
+		component: () => import('@/pages/Services/Default.vue'),
 		meta: {
 			icon: 'las la-scroll',
 			inSidebar: true,
@@ -21,12 +22,14 @@ const routes: Array<RouteRecordRaw> = [
 			{
 				name: 'ServicesView',
 				path: 'view/:name',
-				component: ServicesView,
+				// component: ServicesView,
+				component: () => import('@/pages/Services/View.vue'),
 			},
 			{
 				name: 'ServicesEdit',
 				path: 'edit/:name?',
-				component: ServicesEdit,
+				// component: ServicesEdit,
+				component: () => import('@/pages/Services/Edit.vue'),
 			},
 		],
 	},

@@ -37,7 +37,7 @@
 			/>
 		</div>
 		<div class="flex flex-row">
-			<div class="w-full h-10 flex items-center justify-center" @click="logout">
+			<div class="w-full h-10 flex items-center justify-center cursor-pointer" @click="logout">
 				<i class="las la-lg la-sign-out-alt pr-5"></i>
 				<p>
 					{{ $t('actions.logout') }}

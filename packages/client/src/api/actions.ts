@@ -1,11 +1,15 @@
+import { Buffer } from 'buffer';
 import { Service } from '@/store/modules/services/types';
 import { $tc } from '@/plugins/i18n';
 import { $notification } from '@/services';
 import store from '@/store';
 import { ACTIONS } from '@/store/names';
-import { GrantTypeEnum } from '@/types';
+import { GrantTypeEnum, URLDownload } from '@/types';
 import { GET_REDIRECT_URI, isTokenExpired } from '@/common/helpers';
+import { RootState } from '@/store/types';
+import { web } from '@flerovium/shared';
 import { $api } from './index';
+import { generateDownloadUrl } from './fs';
 
 function tokensExpired(receivedTokensTime: string, expiresIn: string) {
 	if (receivedTokensTime) {
@@ -165,3 +169,82 @@ export async function runRequestData(service: Service) {
 		});
 	}
 }
+
+export const downloadVault = async (vault: RootState): Promise<URLDownload> => {
+	try {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { isAuthenticated, ...rest } = vault;
+
+		// First step: convert object to JSON and save it as Buffer/UInt8Array
+		// We use Buffer because converting JSONObject to utf-8 using TextEncoder is bad
+		// Values above 128 and below 255 creates additional random values
+		// which leads to data corruption and in return we get not exact data we didn't saved
+		const restAB = Buffer.from(JSON.stringify(rest));
+		// Second step: encrypt converted buffer
+		const restABEncrypted = await web.encrypt(
+			restAB,
+			rest.encryption.passwordHash,
+		);
+		// Third step: convert arraybuffer to hex
+		const restAsHex = Buffer.from(restABEncrypted).toString('hex');
+
+		// Fourth step: salt doesn't have to be secret, so it doesn't need to be encrypted
+		// We need salt to generate a new hash used to decrypt the vault
+		const contentRaw = {
+			encryption: {
+				salt: rest.encryption.salt,
+			},
+			data: restAsHex,
+		};
+
+		// Fifth step: save configuration and encrypted data in buffer then convert it to hex
+		const encryptedContent = Buffer.from(JSON.stringify(contentRaw)).toString(
+			'hex',
+		);
+
+		// Finally, generate a download url from our encrypted data
+		const url = generateDownloadUrl(encryptedContent);
+
+		return {
+			name: vault.name,
+			url,
+		};
+	} catch (error) {
+		throw new Error(error);
+	}
+};
+
+export const openVault = async (
+	payload: string,
+	rawPassword: string,
+): Promise<RootState> => {
+	try {
+		// These steps are complicated
+		// 1: Convert saved vault as hex to utf-8
+		const encryptedStringified = Buffer.from(payload, 'hex').toString('utf-8');
+		// 2: Configuration and encrypted data must be parsed as JSON
+		const encryptedParsed = JSON.parse(encryptedStringified);
+		// 3: We get the encryption configuration and our encrypted data
+		const { encryption, data } = encryptedParsed;
+
+		// 4: Create new hash using raw password and old salt
+		const passwordHash = await web.functions.Argon2.hash(
+			rawPassword,
+			encryption.salt,
+		);
+
+		// 5: Convert encrypted data from hex to UInt8Array
+		const dataFromHex = Buffer.from(data, 'hex');
+		// 6: Decrypt with newly generated hash
+		const decryptedAB = await web.decrypt(dataFromHex, passwordHash?.encoded!);
+		// 7: Convert from UInt8Array to utf-8
+		const decrypted = Buffer.from(decryptedAB).toString('utf-8');
+
+		// Finally, we can parse decrypted data as its format is known
+		const vault: RootState = JSON.parse(decrypted);
+
+		return vault;
+	} catch (error) {
+		throw new Error(error);
+	}
+};

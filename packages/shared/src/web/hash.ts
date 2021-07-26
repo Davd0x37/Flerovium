@@ -1,6 +1,7 @@
 // @ts-ignore
 // eslint-disable-next-line import/extensions
 import argon2browser from 'argon2-browser/dist/argon2-bundled.min.js';
+import { Buffer } from 'buffer';
 import { IV_LEN } from './consts';
 import { getRandomValues, str2ab } from './helpers';
 
@@ -52,11 +53,16 @@ export const functions = {
 		 *
 		 * @export
 		 * @param {string} input
-		 * @return {*}  {(Promise<Argon2HashResult | null>)}
+		 * @param {string} [saltNew]
+		 * @return {*}  {(Promise<(Argon2HashResult & { salt: string })>)}
 		 */
-		async hash(input: string): Promise<Argon2HashResult | null> {
+		async hash(
+			input: string,
+			saltNew?: string,
+		): Promise<Argon2HashResult & { salt: string }> {
 			try {
-				const salt = getRandomValues(IV_LEN);
+				const salt =
+					saltNew || Buffer.from(getRandomValues(IV_LEN)).toString('hex');
 				const req = await argon2browser.hash({
 					pass: input,
 					salt,
@@ -69,13 +75,12 @@ export const functions = {
 					hash: req.hash,
 					hashHex: req.hashHex,
 					encoded: req.encoded,
+					salt,
 				};
 			} catch (error) {
-				console.error(
+				throw new Error(
 					`[CRYPTO_HASH] Hashing error #${error.code}: ${error.message}`,
 				);
-
-				return null;
 			}
 		},
 
@@ -85,12 +90,12 @@ export const functions = {
 		 * @export
 		 * @param {string} input
 		 * @param {(string | Uint8Array)} encodedHash
-		 * @return {*}  {(Promise<boolean | null>)}
+		 * @return {*}  {(Promise<boolean>)}
 		 */
 		async verify(
 			input: string,
 			encodedHash: string | Uint8Array,
-		): Promise<boolean | null> {
+		): Promise<boolean> {
 			try {
 				const req = await argon2browser.verify({
 					pass: input,
@@ -100,11 +105,9 @@ export const functions = {
 
 				return !!req;
 			} catch (error) {
-				console.error(
+				throw new Error(
 					`[CRYPTO_HASH] Hash verifying error #${error.code}: ${error.message}`,
 				);
-
-				return null;
 			}
 		},
 	},

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import builtinServices from '@/common/builtinServices';
+// import builtinServices from '@/common/builtinServices';
 import { copyObject } from '@/common/functions';
 import { ACTIONS } from '@/store/names';
 import { v4 as uuidv4 } from 'uuid';
@@ -70,9 +70,9 @@ const mutationsBase: MutationTree<ServiceState> = {
 		state.list[serviceName].auth.hasRequestedTokens = !hasRequestedTokens;
 	},
 
-	[ACTIONS.RESET_STORE_SERVICES](state) {
-		state.list = builtinServices;
-	},
+	// [ACTIONS.RESET_STORE_SERVICES](state) {
+	// 	state.list = builtinServices;
+	// },
 };
 
 export default mutationsBase;

@@ -3,12 +3,10 @@
 - Reorganize api directory
 - Move model functionality from SFComponents to separate files
 - Add electron support
-- Add saving to/reading from file
 - Cleanup components
 - Fix all commented sections in code
-- Add layouts
-- Add welcome screen
 - Add tests
+- Add better error handling
 - Add GitHub Actions
 - Fix encryption. Don't store unencrypted data in localStorage
 - Rewrite some components because they're ugly af

@@ -7,7 +7,6 @@ import { NOTIFICATION_TIME } from '@/common/config';
 import { NotificationState, Notification } from './types';
 
 const store: Module<NotificationState, RootState> = {
-	// namespaced: true,
 	state: {
 		list: [],
 	},
@@ -26,10 +25,6 @@ const store: Module<NotificationState, RootState> = {
 			notifications.shift();
 			state.list = [...notifications];
 		},
-
-		[ACTIONS.RESET_STORE_NOTIFICATION](state) {
-			state.list = [];
-		},
 	},
 	actions: {
 		async [ACTIONS.SHOW_NOTIFICATION]({ commit }, notification: Notification) {
@@ -42,10 +37,6 @@ const store: Module<NotificationState, RootState> = {
 
 		[ACTIONS.REMOVE_NOTIFICATION]({ commit }) {
 			commit(ACTIONS.REMOVE_NOTIFICATION);
-		},
-
-		[ACTIONS.RESET_STORE_NOTIFICATION]({ commit }) {
-			commit(ACTIONS.RESET_STORE_NOTIFICATION);
 		},
 	},
 };

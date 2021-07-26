@@ -8,7 +8,7 @@
 		/>
 
 		<v-input
-			title="Password"
+			:title="$t('form.password')"
 			lightOnDark
 			required
 			type="password"
@@ -39,7 +39,7 @@ import FileSelector from '@/components/common/FileSelector.vue';
 
 import { FileReadHandlers, readFile } from '@/api/fs';
 import { ACTIONS } from '@/store/names';
-import { web } from '@flerovium/shared';
+import { openVault } from '@/api/actions';
 
 export default defineComponent({
 	name: 'WelcomeOpen',
@@ -75,14 +75,9 @@ export default defineComponent({
 	methods: {
 		async open() {
 			try {
-				const hash = await web.functions.Argon2.hash(this.password);
-				const payload = JSON.parse(this.payload);
-				const data = {
-					...payload,
-					passwordHash: hash?.hashHex,
-				};
+				const decrypted = await openVault(this.payload, this.password);
 
-				await this.$store.dispatch(ACTIONS.CREATE_VAULT, data);
+				await this.$store.dispatch(ACTIONS.CREATE_VAULT, decrypted);
 
 				this.$router.push({ name: 'Home' });
 			} catch (error) {
@@ -113,7 +108,7 @@ export default defineComponent({
 			};
 		},
 
-		onUploadFiles(event: InputEvent) {
+		onUploadFiles(event: Event) {
 			const target = event.target as HTMLInputElement;
 			const files = target.files;
 

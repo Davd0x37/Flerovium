@@ -10,6 +10,10 @@
 				<v-icon size="la-5x" icon="las la-plus" />
 				<p>{{ $t('actions.createNew') }}</p>
 			</router-link>
+
+			<div class="border-l-2 mx-5 flex items-center">
+				<locale-changer></locale-changer>
+			</div>
 		</div>
 
 		<div class="mt-5">
@@ -21,18 +25,20 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import VIcon from '@/components/common/VIcon.vue';
+import LocaleChanger from '@/components/LocaleChanger.vue';
 
 export default defineComponent({
 	name: 'WelcomeDefault',
 	components: {
 		VIcon,
+		LocaleChanger,
 	},
 
 	created() {
 		this.$router.push({
-			name: 'WelcomeOpen'
-		})
-	}
+			name: 'WelcomeOpen',
+		});
+	},
 });
 </script>
 

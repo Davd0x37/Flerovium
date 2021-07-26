@@ -8,7 +8,6 @@ import mutations from './mutations';
 import state from './state';
 
 const store: Module<ServiceState, RootState> = {
-	// namespaced: true,
 	state,
 	getters,
 	mutations,

@@ -31,10 +31,6 @@ const actionsBase: ActionTree<ServiceState, RootState> = {
 	[ACTIONS.TOGGLE_REQUESTED_TOKENS]({ commit }, serviceName: string) {
 		commit(ACTIONS.TOGGLE_REQUESTED_TOKENS, serviceName);
 	},
-
-	[ACTIONS.RESET_STORE_SERVICES]({ commit }) {
-		commit(ACTIONS.RESET_STORE_SERVICES);
-	},
 };
 
 export default actionsBase;

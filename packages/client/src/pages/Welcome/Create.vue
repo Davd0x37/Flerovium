@@ -1,8 +1,14 @@
 <template>
 	<div class="flex flex-col flex-wrap">
-		<v-input title="Vault name" lightOnDark required v-model="name"></v-input>
 		<v-input
-			title="Password"
+			:title="$t('form.vaultName')"
+			lightOnDark
+			required
+			v-model="name"
+			@click="v$.$touch"
+		></v-input>
+		<v-input
+			:title="$t('form.password')"
 			lightOnDark
 			required
 			type="password"
@@ -10,13 +16,21 @@
 			@click="v$.$touch"
 		></v-input>
 		<v-input
-			title="Repeat password"
+			:title="$t('form.repeatPassword')"
 			lightOnDark
 			required
 			type="password"
 			v-model="repeatPass"
 			@click="v$.$touch"
 			:rules="rules"
+		></v-input>
+		<v-input
+			:title="$t('form.useBuiltin')"
+			lightOnDark
+			required
+			type="checkbox"
+			v-model="useBuiltin"
+			@click="v$.$touch"
 		></v-input>
 
 		<v-button icon="las la-save" @click="save" v-if="isClear" inversed>{{
@@ -51,6 +65,7 @@ export default defineComponent({
 			name: '',
 			password: '',
 			repeatPass: '',
+			useBuiltin: true,
 			isClear: false,
 		};
 	},
@@ -64,6 +79,7 @@ export default defineComponent({
 	computed: {
 		rules: function () {
 			return {
+				// @ts-ignore
 				sameAs: sameAs(this.password),
 			};
 		},
@@ -74,8 +90,12 @@ export default defineComponent({
 			try {
 				const hash = await web.functions.Argon2.hash(this.password);
 				const payload = {
+					useBuiltin: this.useBuiltin,
 					name: this.name,
-					passwordHash: hash?.hashHex,
+					encryption: {
+						passwordHash: hash?.encoded,
+						salt: hash?.salt,
+					},
 				};
 
 				await this.$store.dispatch(ACTIONS.CREATE_VAULT, payload);
