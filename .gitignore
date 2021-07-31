@@ -3,5 +3,4 @@ dist
 *.lock
 build
 lib
-package-lock.json
 .vscode
