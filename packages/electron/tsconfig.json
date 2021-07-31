@@ -1,26 +1,13 @@
 {
+	"extends": "../../tsconfig.json",
 	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"removeComments": true,
-		"importHelpers": true,
-		"downlevelIteration": true,
-		"isolatedModules": true,
-		"strict": true,
+		"rootDir": "./src",
+		"outDir": "../../build/electron",
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"moduleResolution": "node",
 		"types": ["jest"],
-		"esModuleInterop": true,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
 		"declaration": true,
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["src/*"]
-		}
+		"baseUrl": "."
 	},
-	"exclude": ["node_modules", "__tests__/**/*.test.ts"]
+	"exclude": ["node_modules", "tests"]
 }

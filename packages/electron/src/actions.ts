@@ -1,3 +1,5 @@
+export default {};
+
 // import { dialog, IpcMain, IpcMainInvokeEvent, BrowserWindow } from 'electron'
 // import { writeFileSync, readFileSync } from 'fs'
 // import { DIALOGTYPE } from '@flerovium/shared'

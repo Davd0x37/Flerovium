@@ -2,7 +2,6 @@
   "name": "@flerovium/electron",
   "version": "0.0.1",
   "description": "Electron backend",
-  "main": "dist/index.js",
   "author": "David",
   "license": "MIT",
   "private": true,
@@ -10,25 +9,31 @@
     "node": ">=14"
   },
   "scripts": {
-    "build": "rollup -c rollup.config.js",
+    "build": "tsc",
     "electron:serve": "electron ../../build/electron/index.js",
     "electron:serve:dev": "cross-env NODE_ENV=development electron ../../build/electron/index.js",
-    "dev": "cross-env NODE_ENV=development npm build && npm electron:serve:dev",
+    "dev": "cross-env NODE_ENV=development yarn run build && yarn run electron:serve:dev",
     "prettier:format": "prettier --write src",
     "prettier:lint": "prettier --check src",
     "eslint:fix": "eslint --fix src",
     "eslint:lint": "eslint src",
-    "test:jest": "jest",
-    "test:jest:watch": "jest --watch"
+    "test": "jest --passWithNoTests"
   },
   "devDependencies": {
     "@types/faker": "^5.5.6",
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.12.0",
     "electron-is-dev": "^2.0.0",
-    "faker": "^5.5.3"
+    "faker": "^5.5.3",
+    "jest": "^27.0.4",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.2",
+    "typescript": "^4.3.2"
   },
   "dependencies": {
-    "@flerovium/shared": "^0.0.1",
+    "@flerovium/eslint-config": "^0.0.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^10.0.0",
     "electron": "13.1.1",
     "electron-reloader": "1.2.1"
   }

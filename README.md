@@ -6,6 +6,8 @@
 - Cleanup components
 - Fix all commented sections in code
 - Add tests
+- Move API to separate package
+- Remove JSON Editor
 - Add better error handling
 - Add GitHub Actions
 - Fix encryption. Don't store unencrypted data in localStorage
