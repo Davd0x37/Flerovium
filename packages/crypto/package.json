@@ -18,6 +18,7 @@
 	],
 	"scripts": {
 		"build": "rimraf lib && tsc",
+		"dev": "rimraf lib && tsc --watch",
 		"build:prod": "rimraf lib && yarn run eslint:fix && yarn run prettier:format && yarn run build",
 		"prettier:format": "prettier --write src tests",
 		"prettier:lint": "prettier --check src",

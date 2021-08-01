@@ -15,20 +15,20 @@
     ]
   },
   "scripts": {
-    "dev": "npm-s dev:common dev:web dev:electron",
-    "dev:web": "lerna run dev --scope=@flerovium/web",
-    "dev:electron": "lerna run dev --scope=@flerovium/electron",
-    "dev:common": "lerna run dev --scope=@flerovium/crypto",
+    "dev": "run-p dev:common dev:web dev:electron",
+    "dev:web": "lerna run dev --scope=@flerovium/web --stream",
+    "dev:electron": "lerna run dev --scope=@flerovium/electron --stream",
+    "dev:common": "lerna run dev --scope=@flerovium/crypto --stream",
 
     "build": "rimraf build && run-s eslint:fix prettier:format build:common build:web build:electron",
-    "build:web": "lerna run build --scope=@flerovium/web",
-    "build:electron": "lerna run build --scope=@flerovium/electron",
-    "build:common": "lerna run build --scope=@flerovium/crypto",
+    "build:web": "lerna run build --scope=@flerovium/web --stream",
+    "build:electron": "lerna run build --scope=@flerovium/electron --stream",
+    "build:common": "lerna run build --scope=@flerovium/crypto --stream",
 
     "test": "lerna run test",
-    "test:web": "lerna run test --scope=@flerovium/web",
-    "test:electron": "lerna run test --scope=@flerovium/electron",
-    "test:common": "lerna run test --scope=@flerovium/crypto",
+    "test:web": "lerna run test --scope=@flerovium/web --stream",
+    "test:electron": "lerna run test --scope=@flerovium/electron --stream",
+    "test:common": "lerna run test --scope=@flerovium/crypto --stream",
   
     "prettier:format": "lerna run prettier:format",
     "prettier:lint": "lerna run prettier:lint",
@@ -42,6 +42,5 @@
   },
   "dependencies": {
     "npm-run-all": "^4.1.5"
-  },
-  "packageManager": "yarn@3.0.0"
+  }
 }
