@@ -1,7 +1,7 @@
 {
   "name": "flerovium",
-  "version": "0.0.1",
-  "main": "index.js",
+  "version": "0.0.2",
+  "description": "Flerovium web client",
   "author": "David",
   "license": "MIT",
   "private": true,
@@ -9,38 +9,73 @@
     "type": "git",
     "url": "git://github.com/Davd0x37/Flerovium.git"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+  "engines": {
+    "node": ">=14"
   },
   "scripts": {
-    "dev": "run-p dev:common dev:web dev:electron",
-    "dev:web": "lerna run dev --scope=@flerovium/web --stream",
-    "dev:electron": "lerna run dev --scope=@flerovium/electron --stream",
-    "dev:common": "lerna run dev --scope=@flerovium/crypto --stream",
-
-    "build": "rimraf build && run-s eslint:fix prettier:format build:common build:web build:electron",
-    "build:web": "lerna run build --scope=@flerovium/web --stream",
-    "build:electron": "lerna run build --scope=@flerovium/electron --stream",
-    "build:common": "lerna run build --scope=@flerovium/crypto --stream",
-
-    "test": "lerna run test",
-    "test:web": "lerna run test --scope=@flerovium/web --stream",
-    "test:electron": "lerna run test --scope=@flerovium/electron --stream",
-    "test:common": "lerna run test --scope=@flerovium/crypto --stream",
-  
-    "prettier:format": "lerna run prettier:format",
-    "prettier:lint": "lerna run prettier:lint",
-    
-    "eslint:fix": "lerna run eslint:fix",
-    "eslint:lint": "lerna run eslint:lint"
-  },
-  "devDependencies": {
-    "prettier": "^2.3.0",
-    "rimraf": "^3.0.2"
+    "dev": "vite --host",
+    "build": "vue-tsc --noEmit && vite build --emptyOutDir",
+    "build:prod": "yarn format && yarn lint && yarn build",
+    "serve": "vite preview",
+    "serve:electron": "electron electron/index.js",
+    "serve:electron:dev": "cross-env NODE_ENV=development electron electron/index.js",
+    "test": "echo \"web-test-runner -- not implemented\"",
+    "format": "prettier --write app tests",
+    "format:lint": "prettier --check app",
+    "lint": "eslint --ext .ts,.tsx,.js,.vue app",
+    "lint:fix": "eslint --ext .ts,.tsx,.js,.vue --fix app",
+    "clean": "rimraf build"
   },
   "dependencies": {
-    "npm-run-all": "^4.1.5"
+    "@tailwindcss/forms": "^0.3.3",
+    "@vuelidate/core": "^2.0.0-alpha.23",
+    "@vuelidate/validators": "^2.0.0-alpha.20",
+    "argon2-browser": "^1.18.0",
+    "axios": "^0.21.1",
+    "buffer": "6.0.3",
+    "debug": "^4.3.2",
+    "dotenv": "^10.0.0",
+    "electron": "13.1.9",
+    "jsoneditor": "^9.5.3",
+    "pinia": "next",
+    "qs": "^6.10.1",
+    "uuid": "^8.3.2",
+    "vue": "^3.2.2",
+    "vue-i18n": "^9.1.7",
+    "vue-router": "4.0.11"
+  },
+  "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4",
+    "@types/argon2-browser": "^1.18.1",
+    "@types/chai": "^4.2.21",
+    "@types/debug": "^4.1.7",
+    "@types/faker": "^5.5.7",
+    "@types/jsoneditor": "^8.6.1",
+    "@types/node": "^16.6.0",
+    "@types/uuid": "^8.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.1",
+    "@typescript-eslint/parser": "^4.29.1",
+    "@vitejs/plugin-vue": "^1.4.0",
+    "@vue/compiler-sfc": "^3.2.2",
+    "@web/dev-server-esbuild": "^0.2.12",
+    "@web/test-runner": "^0.13.15",
+    "@web/test-runner-playwright": "^0.8.6",
+    "autoprefixer": "^10.3.1",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-vue": "^7.16.0",
+    "faker": "^5.5.3",
+    "postcss": "^8.3.6",
+    "postcss-cli": "^8.3.1",
+    "prettier": "^2.3.2",
+    "rimraf": "^3.0.2",
+    "tailwindcss": "^2.2.7",
+    "typescript": "^4.3.5",
+    "vite": "^2.4.4",
+    "vue-eslint-parser": "^7.10.0",
+    "vue-tsc": "^0.2.2"
   }
 }

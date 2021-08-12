@@ -1,12 +1,7 @@
 # TODO:
 
-- Reorganize api directory
-- Move model functionality from SFComponents to separate files
-- Add electron support
-- Cleanup components
 - Fix all commented sections in code
-- Add tests
-- Move API to separate package
+- Add tests and fix web test runner
 - Remove JSON Editor
 - Add better error handling
 - Add GitHub Actions
@@ -50,37 +45,53 @@ Based on that schema, CLI tool will generate corresponding store types, getters 
 Form will be saved in separate js/ts file and can be used to pass it to form component. Changes made in created form will be mirrored in store. <br>
 In short: make schema, use tool (or something else, idk) to generate corresponding files, add form to component and pass form file to component, change value in form, changes will be saved in store.
 
-
 ## How to build?
 
-For now
-
-Install lerna globally
-```
-npm install -g lerna
-```
+Replace yarn from commands below if you want use other package manager
 
 Install packages
+
 ```
-lerna bootstrap
+yarn install
 ```
 
-Build client and shared packages
+Build web client
+
 ```
-npm run build:prod
+yarn run build
 ```
 
-## Run dev
-Change directory to packages/client
+Build web client with formatting and linting before
+
 ```
-npm run dev
+yarn run build:prod
 ```
 
-Or if you prefer snowpack
+Using docker
+
 ```
-npm run dev:snowpack
-````
+./scripts/build.sh
+```
 
-# Why no electron?
+## Build dev
 
-For now it's only ported to browser. Next version will have electron enabled.
+Run development version
+
+```
+yarn run dev
+```
+
+## Run
+
+Run from docker (if image was already been built)
+
+```
+./scripts/run.sh
+```
+
+Otherwise
+
+```
+./scripts/build.sh
+./scripts/run.sh
+```
