@@ -83,10 +83,13 @@ export class RequestService {
 
       return req.data;
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.error(`Error during sending get request: ${err}`);
+      if (err instanceof Error) {
+        this.error(`Error during sending get request: ${err.message}`);
 
-      throw new Error(err);
+        throw new Error(err.message);
+      }
+
+      throw new Error(`Error during sending get request`);
     }
   }
 
@@ -97,7 +100,13 @@ export class RequestService {
 
       return req.data;
     } catch (err) {
-      throw new Error(err);
+      if (err instanceof Error) {
+        this.error(`Error during sending get request: ${err.message}`);
+
+        throw new Error(err.message);
+      }
+
+      throw new Error(`Error during sending get request`);
     }
   }
 }

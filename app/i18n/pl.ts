@@ -10,8 +10,8 @@ export default {
   routes: {
     ProfileDefault: 'Profil',
     ProfileData: 'Informacje',
-    ProfileStore: 'Pamięć',
-    ProfileSettings: 'Ustawienia',
+    GlobalStore: 'Pamięć',
+    Settings: 'Ustawienia',
     ServicesDefault: 'Serwisy',
     Home: 'Strona główna',
   },
@@ -43,6 +43,14 @@ export default {
     vaultName: 'Nazwa schowka',
     password: 'Hasło',
     repeatPassword: 'Powtórz hasło',
+  },
+  validations: {
+    required: 'Pole {property} jest wymagane.',
+    minLength:
+      "Pole {property} o wartości '{model}' musi mieć minimalną długość {min}.",
+    maxLength:
+      "Pole {property} o wartości '{model}' musi mieć maksymalną długość {max}.",
+    sameAs: 'Pole musi mieć taką samą wartość jak {equalTo}.',
   },
   popup: {
     receivedData: {

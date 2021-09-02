@@ -81,8 +81,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 import useVuelidate from '@vuelidate/core';
@@ -95,7 +95,6 @@ import { Service } from '@/types/service';
 
 import { copyObject, GET_REDIRECT_URI } from '@/helpers/utils';
 import { useServiceStore } from '@/store/service';
-import { useStore } from '@/store/main';
 
 // @TODO: remove or move to config directory
 const defaults = (): Service => ({
@@ -138,63 +137,38 @@ const defaults = (): Service => ({
   ],
 });
 
-export default defineComponent({
-  name: 'ServicesEdit',
-  components: {
-    JsonEditor,
-    VInput,
-    VButton,
-    VLabel,
-  },
+const v$ = useVuelidate();
+const serviceStore = useServiceStore();
 
-  setup() {
-    const v$ = useVuelidate();
-    const store = useStore();
-    const serviceStore = useServiceStore();
+const route = useRoute();
+const params = computed(() => route.params);
+const service = ref({} as Service);
 
-    const route = useRoute();
-    const params = computed(() => route.params);
-    // FIXME: add proper typing
-    const service = ref({} as Service);
+const { name } = params.value;
+if (name) {
+  service.value = copyObject(serviceStore.getService(name as string));
+} else {
+  service.value = defaults();
+}
 
-    const { name } = params.value;
-    if (name) {
-      service.value = copyObject(serviceStore.getService(name as string));
-    } else {
-      service.value = defaults();
-    }
+function isParamsSet() {
+  return !!route.params?.name;
+}
 
-    return {
-      v$,
-      store,
-      serviceStore,
-      service,
-    };
-  },
+function submit() {
+  v$.value.$touch();
+  if (v$.value.$error) return;
 
-  methods: {
-    isParamsSet() {
-      return !!this.$route.params?.name;
-    },
+  // We need to make copy of services obj because vue puts it in proxy and
+  // after saving, it automatically changes properties in store
+  // instead of copy it stores reactive handler
+  const redirectUri = GET_REDIRECT_URI(service.value.name);
+  service.value.auth.credentials.redirectUri = redirectUri;
 
-    submit() {
-      this.v$.$touch();
-      if (this.v$.$error) return;
-
-      // We need to make copy of services obj because vue puts it in proxy and
-      // after saving, it automatically changes properties in store
-      // instead of copy it stores reactive handler
-      const redirectUri = GET_REDIRECT_URI(this.service.name);
-      this.service.auth.credentials.redirectUri = redirectUri;
-
-      if (this.isParamsSet()) {
-        this.serviceStore.updateService(this.service);
-      } else {
-        this.serviceStore.addService(this.service);
-      }
-    },
-  },
-});
+  if (isParamsSet()) {
+    serviceStore.updateService(service.value);
+  } else {
+    serviceStore.addService(service.value);
+  }
+}
 </script>
-
-<style lang="postcss" scoped></style>

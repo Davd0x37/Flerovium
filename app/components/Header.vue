@@ -5,14 +5,17 @@
       justify-items-center
       items-center
       h-20
-      text-secondary
-      dark:text-primary
+      text-primary
     "
   >
     <div>
       <i class="las la-2x la-ellipsis-h"></i>
     </div>
-    <div class="justify-self-start font-bold text-4xl">{{ vaultName }}</div>
+
+    <div class="justify-self-start font-bold text-4xl">
+      {{ vaultName }}
+    </div>
+
     <div class="justify-self-stretch">
       <input
         id="search"
@@ -25,62 +28,121 @@
           w-full
           rounded
           border border-none
-          text-primary
-          dark:text-secondary
+          text-brand
           placeholder-brand
-          bg-secondary
-          dark:bg-primary
+          bg-gray-700
         "
-        type="search"
+        type="text"
         name="search"
         :placeholder="$t('header.search')"
       />
     </div>
+
     <div class="flex flex-row">
+      <v-dropdown :title="$t('header.actions')">
+        <ul class="nav">
+          <li>
+            <p @click="save">{{ $t('actions.save') }}</p>
+          </li>
+
+          <li v-if="servicesExist">
+            <p @click="refresh">{{ $t('actions.refresh') }}</p>
+          </li>
+
+          <li>
+            <p @click="logout">{{ $t('actions.open') }}</p>
+          </li>
+        </ul>
+      </v-dropdown>
+
+      <locale-changer class="px-5"></locale-changer>
+
       <div
         class="w-full h-10 flex items-center justify-center cursor-pointer"
         @click="logout"
       >
-        <i class="las la-lg la-sign-out-alt pr-5"></i>
+        <i class="las la-lg la-sign-out-alt pr-2.5"></i>
         <p>
           {{ $t('actions.logout') }}
         </p>
       </div>
-      <locale-changer></locale-changer>
     </div>
+
+    <a v-show="false" ref="link" href="#">download</a>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script lang="ts" setup>
+import { computed, Ref, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { debug } from 'debug';
 import { useStore } from '@/store/main';
-import LocaleChanger from './LocaleChanger.vue';
+import VDropdown from '@/components/common/VDropdown.vue';
+import LocaleChanger from '@/components/LocaleChanger.vue';
+import { StorageService } from '@/services/storage.service';
+import { useNotificationStore } from '@/store/notification';
+import { useServiceStore } from '@/store/service';
+import { ApiService } from '@/services/api.service';
 
-export default defineComponent({
-  name: 'Header',
-  components: {
-    LocaleChanger,
+const apiService = new ApiService();
+const store = useStore();
+const serviceStore = useServiceStore();
+const notif = useNotificationStore();
+const router = useRouter();
+const { vaultName } = store;
+const search = ref('');
+const link = ref<HTMLAnchorElement>() as Ref<HTMLAnchorElement>;
+const servicesExist = computed(() => serviceStore.servicesExist);
+
+watch(
+  () => search.value,
+  val => {
+    store.setSearch(val);
   },
+);
 
-  setup() {
-    const store = useStore();
-    const { vaultName } = store;
-    const search = ref('');
+async function save() {
+  try {
+    const { vault } = store;
+    const { name, url } = await StorageService.downloadVault(vault);
 
-    return {
-      store,
-      vaultName,
-      search,
-    };
-  },
+    link.value.href = url;
+    link.value.download = `${name}-encrypted.json`;
+    link.value.click();
+  } catch (error) {
+    if (error instanceof Error) {
+      debug('[Settings]')(`Save: ${error.message}`);
 
-  methods: {
-    logout() {
-      this.store.setAuthenticated(false);
-      void this.$router.push({ name: 'WelcomeDefault' });
-    },
-  },
-});
+      notif.showNotification({
+        mode: 'error',
+        title: 'Error while exporting vault',
+        message: error.message,
+      });
+    }
+  }
+}
+async function refresh() {
+  await apiService.refreshServices();
+}
+
+function logout() {
+  store.setAuthenticated(false);
+  void router.push({ name: 'WelcomeDefault' });
+}
 </script>
 
-<style lang="postcss"></style>
+<style lang="postcss">
+.nav li p {
+  cursor: pointer;
+  display: block;
+  transition: theme('transitionProperty.all')
+    theme('transitionDuration.DEFAULT')
+    theme('transitionTimingFunction.DEFAULT');
+  will-change: background-color;
+  padding: theme('padding[2.5]');
+}
+
+.nav li p:hover {
+  background-color: theme('backgroundColor.brand');
+}
+</style>

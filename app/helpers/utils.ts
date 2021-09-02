@@ -1,10 +1,17 @@
-import { APP_URL } from '@/common/constants';
+export const isBrowser = typeof window !== 'undefined';
+export const isNode = typeof process === 'object';
+export const isElectron =
+  typeof navigator === 'object' &&
+  typeof navigator.userAgent === 'string' &&
+  navigator.userAgent.indexOf('Electron') >= 0;
 
-// export const isBrowser = typeof window !== 'undefined';
-// export const isNode = typeof process === 'object';
+export const GET_REDIRECT_URI = (name: string): string => {
+  if (isElectron) {
+    return `http://localhost/authorize/${name}`;
+  }
 
-export const GET_REDIRECT_URI = (name: string): string =>
-  `${APP_URL}/authorize/${name}`;
+  return `${window.location.origin}/authorize/${name}`;
+};
 
 // export const createBasicToken = (clientId: string, clientSecret: string) => {
 // 	const concatenatedToken = `${clientId}:${clientSecret}`;

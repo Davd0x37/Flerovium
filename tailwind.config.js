@@ -1,12 +1,18 @@
 const colors = {
   primary: {
-    light: '#F8F8F8',
-    DEFAULT: '#D8DDBF',
-  }, // background with dark text - text-secondary, bg-primary
-  secondary: '#2F4A55', // text with light background - text-primary, bg-secondary
+    DEFAULT: '#F8F7F1',
+    light: '#F8F7F1',
+    dark: '#F8F7F1',
+  },
+  secondary: {
+    DEFAULT: '#4E6E7A',
+    light: '#4E6E7A',
+    dark: '#282D31',
+  },
   accent: {
-    light: '#EA9759',
-    dark: '#237F6A',
+    DEFAULT: '#D4DFC8',
+    light: '#D4DFC8',
+    dark: '#84A294',
   },
   brand: '#6FAF49',
   info: '#2f4a55',

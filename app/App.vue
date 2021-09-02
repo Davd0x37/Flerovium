@@ -1,64 +1,76 @@
 <template>
-  <div :class="isDarkMode ? 'dark' : ''">
+  <div>
     <div
       class="
-        bg-primary
-        dark:bg-secondary
-        text-secondary
-        dark:text-primary
+        text-primary
+        bg-secondary-dark
         font-display
         flex flex-col
         h-full
         min-h-screen min-w-min
       "
     >
-      <component :is="layout"></component>
+      <component :is="isAuth ? DefaultLayout : WelcomeLayout"></component>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { RouteLocationNormalized } from 'vue-router';
+<script lang="ts" setup>
+import { computed, onMounted } from 'vue';
 
 import { useStore } from './store/main';
+import { useServiceStore } from '@/store/service';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import WelcomeLayout from '@/layouts/WelcomeLayout.vue';
+import { isElectron } from './helpers/utils';
 
-export default defineComponent({
-  name: 'App',
+const store = useStore();
+const isAuth = computed(() => store.isAuthenticated);
 
-  components: {
-    DefaultLayout,
-    WelcomeLayout,
-  },
+if (isElectron) {
+  // Allow ipcRendener only in electron
+  onMounted(() => {
+    const serviceStore = useServiceStore();
 
-  setup() {
-    const store = useStore();
-    const layout = ref('');
+    /* eslint-disable @typescript-eslint/no-unsafe-call */
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    window.authApi.onServiceAuth(query => {
+      const url = new URL(query);
+      const name = url.pathname.split('/').pop();
+      const params = url.searchParams;
+      if (name) {
+        const code = params.get('code');
+        const _state = params.get('state');
 
-    return {
-      layout,
-      store,
-    };
-  },
-
-  computed: {
-    isDarkMode(): boolean {
-      return this.store.isDarkMode;
-    },
-  },
-
-  watch: {
-    $route(to: RouteLocationNormalized) {
-      if (to.meta.layout !== undefined) {
-        this.layout = to.meta.layout as string;
-      } else {
-        this.layout = 'DefaultLayout';
+        serviceStore.updateTokens(name, { code });
       }
-    },
-  },
-});
+    });
+  });
+}
 </script>
 
-<style lang="postcss"></style>
+<style lang="postcss">
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: theme('width[3.5]');
+  height: theme('width[3.5]');
+}
+
+::-webkit-scrollbar-track {
+  background: theme('backgroundColor.default');
+}
+
+::-webkit-scrollbar-corner {
+  background: theme('backgroundColor.default');
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: theme('borderRadius.DEFAULT');
+  background-color: theme('backgroundColor.brand');
+}
+</style>

@@ -1,9 +1,7 @@
 <template>
   <div
     :class="[
-      lightOnDark
-        ? 'text-secondary dark:text-primary'
-        : 'dark:text-secondary text-primary',
+      inversed ? 'text-primary' : 'text-primary',
       'flex flex-col w-full lg:w-80 2xl:w-96 pb-5 px-5',
     ]"
   >
@@ -12,73 +10,69 @@
       :id="title"
       v-model="value"
       :type="type"
-      class="text-secondary"
+      :class="inversed ? 'text-accent-dark' : 'text-secondary-dark'"
       @blur="v$.value.$touch"
     />
 
-    <div
-      v-for="error of v$.value.$errors"
-      :key="error.$uid"
-      class="input-errors"
-    >
+    <div v-for="error of v$.$errors" :key="error.$uid" class="input-errors">
       <div class="text-danger pt-2.5 font-bold">{{ error.$message }}</div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-/* eslint-disable vue/require-default-prop */
+<script lang="ts" setup>
+import { computed, Ref } from 'vue';
+import useVuelidate, { ValidationArgs } from '@vuelidate/core';
+import {
+  req as required,
+  maxLen as maxLength,
+  minLen as minLength,
+} from '@/i18n/validators';
 
-import { defineComponent } from 'vue';
-import useVuelidate from '@vuelidate/core';
-import { required, maxLength, minLength } from '@vuelidate/validators';
-
-export default defineComponent({
-  name: 'VLink',
-
-  props: {
-    modelValue: {},
-    title: { type: String, default: 'Title', required: true },
-    type: { type: String, default: 'text', required: false },
-    lightOnDark: { type: Boolean, required: false, default: false },
-    required: { type: Boolean, required: false },
-    maxLength: { type: Number, required: false },
-    minLength: { type: Number, required: false },
-    rules: { type: Object, required: false },
+const props = withDefaults(
+  defineProps<{
+    modelValue: string | boolean;
+    title: string;
+    type?: string;
+    required?: boolean;
+    maxLength?: number;
+    minLength?: number;
+    inversed?: boolean;
+    rules?: Record<string, unknown>;
+  }>(),
+  {
+    title: 'Title',
+    type: 'text',
+    inversed: false,
   },
+);
 
-  emits: ['update:modelValue'],
-
-  data() {
-    return {
-      v$: useVuelidate(),
-    };
+const rules = computed(() => ({
+  value: {
+    ...(props.required ? { required } : {}),
+    // FIXME: fix custom validators in vuelidate
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    ...(props.maxLength ? { maxLength: maxLength(props.maxLength) } : {}),
+    // FIXME: fix custom validators in vuelidate
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    ...(props.minLength ? { minLength: minLength(props.minLength) } : {}),
+    ...(props.rules ?? {}),
   },
+})) as Ref<ValidationArgs>;
 
-  computed: {
-    value: {
-      get(): any {
-        return this.modelValue;
-      },
-      set(value: string) {
-        this.$emit('update:modelValue', value);
-      },
-    },
+const emits = defineEmits(['update:modelValue']);
+const value = computed({
+  get(): any {
+    return props.modelValue;
   },
-
-  validations() {
-    const rules = {
-      ...(this.required ? { required } : {}),
-      ...(this.maxLength ? { maxLength: maxLength(this.maxLength) } : {}),
-      ...(this.minLength ? { minLength: minLength(this.minLength) } : {}),
-      ...(this.rules ?? {}),
-    };
-
-    return {
-      value: rules,
-    };
+  set(val: string) {
+    emits('update:modelValue', val);
   },
 });
-</script>
 
-<style lang="postcss"></style>
+const v$ = useVuelidate(rules, { value });
+</script>

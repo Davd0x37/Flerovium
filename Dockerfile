@@ -8,12 +8,15 @@ RUN npm install
 
 COPY . .
 
-RUN npm run format
-RUN npm run lint
-RUN npm run build
+# RUN npm run format
+# RUN npm run lint
+RUN npm run build:web
 
-FROM flashspys/nginx-static
+FROM nginx as prod
 
-RUN apk update && apk upgrade
+# RUN apk update && apk upgrade
 
-COPY --from=app_build /app/build /static
+RUN mkdir /app
+
+COPY --from=app_build /app/dist /app
+COPY nginx.conf /etc/nginx/nginx.conf

@@ -1,8 +1,8 @@
 <template>
-  <div class="px-5">
+  <div>
     <select
-      v-model="$i18n.locale"
-      class="bg-secondary dark:bg-primary text-primary dark:text-secondary"
+      v-model="locale"
+      class="text-primary bg-gray-700 border-none rounded py-2.5"
     >
       <option v-for="(lang, i) in langs" :key="`Lang${i}`" :value="lang">
         {{ lang }}
@@ -11,37 +11,24 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import locales from '@/i18n';
+<script lang="ts" setup>
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useStore } from '@/store/main';
+import locales from '@/i18n';
 
-export default defineComponent({
-  name: 'LocaleChanger',
+const { locale } = useI18n({ useScope: 'global' });
+const store = useStore();
 
-  setup() {
-    const store = useStore();
-    const { language } = store;
-    const langs = ref(Object.keys(locales));
-    const selected = ref(language);
+const { language } = store;
+const selected = ref(language);
+const langs = ref(Object.keys(locales));
 
-    // this.$i18n.locale = selected.value;
-
-    return {
-      store,
-      language,
-      langs,
-      selected,
-    };
+watch(
+  () => selected.value,
+  (newLang: string) => {
+    store.changeLanguage(newLang);
+    locale.value = newLang;
   },
-
-  watch: {
-    selected: {
-      handler(newLang: string) {
-        this.store.changeLanguage(newLang);
-        this.$i18n.locale = newLang;
-      },
-    },
-  },
-});
+);
 </script>

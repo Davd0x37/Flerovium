@@ -1,7 +1,7 @@
 <template>
   <div class="w-72 px-2 h-full">
     <div id="menu">
-      <div v-for="item in paths()" :key="item.title" :to="item.path">
+      <div v-for="item in paths" :key="item.title" :to="item.path">
         <div class="flex items-end flex-row">
           <sidebar-link
             :href="item.path"
@@ -41,12 +41,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import {
   RouteRecordName,
   RouteRecordNormalized,
   RouteRecordRaw,
+  useRouter,
 } from 'vue-router';
 
 import SidebarLink from '@/components/SidebarLink.vue';
@@ -54,87 +55,73 @@ import { Service } from '@/types/service';
 import { useServiceStore } from '@/store/service';
 import { PlusAction, SidebarPath } from '@/types/sidebar';
 
-export default defineComponent({
-  name: 'Sidebar',
-  components: {
-    SidebarLink,
-  },
+import { $t } from '@/plugins/i18n';
 
-  setup() {
-    const serviceStore = useServiceStore();
+const serviceStore = useServiceStore();
+const $router = useRouter();
 
-    return {
-      serviceStore,
-    };
-  },
+const servicesList = computed(() =>
+  serviceStore.servicesList.map((service: Service) => ({
+    title: service.name,
+    icon: service.config.icon,
+    color: service.config.color,
+    path: {
+      name: 'ServicesView',
+      params: {
+        name: service.name,
+      },
+    },
+  })),
+);
 
-  methods: {
-    getServices(): SidebarPath[] {
-      return this.serviceStore.servicesList.map((service: Service) => ({
-        title: service.name,
-        icon: service.config.icon,
-        color: service.config.color,
+function translatePath(name: string): string {
+  return $t(`routes.${name}`);
+}
+
+function normalizePath(
+  route: RouteRecordNormalized | RouteRecordRaw,
+): SidebarPath {
+  const { name, children: nodes, meta } = route;
+  // Always add name to path as it will be used for translation
+  const title = translatePath((name as RouteRecordName).toString());
+  const path = { name } as { name: RouteRecordName };
+
+  const icon = meta?.icon as string;
+  const metaActions = meta?.plusAction as PlusAction | undefined;
+  const actions = metaActions
+    ? {
+        icon: metaActions.icon || '',
         path: {
-          name: 'ServicesView',
-          params: {
-            name: service.name,
-          },
+          name: metaActions.pathName || '',
         },
-      }));
-    },
-
-    translatePath(name: string): string {
-      return this.$t(`routes.${name}`);
-    },
-
-    normalizePath(route: RouteRecordNormalized | RouteRecordRaw): SidebarPath {
-      const { name, children: nodes, meta } = route;
-      // Always add name to path as it will be used for translation
-      const title = this.translatePath(name!.toString());
-      const path = { name } as { name: RouteRecordName };
-
-      const icon = meta?.icon as string;
-      const metaActions = meta?.plusAction as PlusAction | undefined;
-      const actions = metaActions
-        ? {
-            icon: metaActions.icon || '',
-            path: {
-              name: metaActions.pathName || '',
-            },
-          }
-        : null;
-
-      // 1. Check for non-script paths and return as array
-      // 2. Check if scripts path should list services
-      const included = meta?.includeChildren as boolean | undefined;
-      const listServices = meta?.listServices as boolean | undefined;
-      let children: SidebarPath[] = [];
-
-      if (included) {
-        children = nodes!.map(node => this.normalizePath(node));
-      } else if (listServices) {
-        children = this.getServices();
       }
+    : null;
 
-      return {
-        title,
-        icon,
-        path,
-        children,
-        ...(actions ? { actions } : {}),
-      };
-    },
+  // 1. Check for non-script paths and return as array
+  // 2. Check if scripts path should list services
+  const included = meta?.includeChildren as boolean | undefined;
+  const listServices = meta?.listServices as boolean | undefined;
+  let children: SidebarPath[] = [];
 
-    paths() {
-      const routes = this.$router
-        .getRoutes()
-        .filter(route => route.meta.inSidebar)
-        .map(route => this.normalizePath(route));
+  if (included) {
+    children = (nodes as RouteRecordRaw[]).map(node => normalizePath(node));
+  } else if (listServices) {
+    children = servicesList.value;
+  }
 
-      return routes;
-    },
-  },
-});
+  return {
+    title,
+    icon,
+    path,
+    children,
+    ...(actions ? { actions } : {}),
+  };
+}
+
+const paths = computed(() =>
+  $router
+    .getRoutes()
+    .filter(route => route.meta.inSidebar)
+    .map(route => normalizePath(route)),
+);
 </script>
-
-<style lang="postcss"></style>

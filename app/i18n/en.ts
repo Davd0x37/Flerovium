@@ -10,8 +10,8 @@ export default {
   routes: {
     ProfileDefault: 'Profile',
     ProfileData: 'Data',
-    ProfileStore: 'Store',
-    ProfileSettings: 'Settings',
+    GlobalStore: 'Store',
+    Settings: 'Settings',
     ServicesDefault: 'Services',
     Home: 'Home',
   },
@@ -43,6 +43,14 @@ export default {
     vaultName: 'Vault name',
     password: 'Password',
     repeatPassword: 'Repeat password',
+  },
+  validations: {
+    required: 'The field {property} is required.',
+    minLength:
+      "The field has a value of '{model}', but it must have a min length of {min}.",
+    maxLength:
+      "The field has a value of '{model}', but it must have a max length of {max}.",
+    sameAs: 'The value must be equal to the {equalTo} value.',
   },
   popup: {
     receivedData: {

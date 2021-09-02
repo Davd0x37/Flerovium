@@ -1,11 +1,13 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const { join } = require('path');
+const debug = require('debug');
+const { createAuthWindow, destroyAuthWin } = require('./authWin');
 
 // https://github.com/electron/electron/issues/9920#issuecomment-575839738
 
 // const isDev = !app.isPackaged;
-const isDev = process.env.NODE_ENV === 'development';
-const PORT = process.env.CLIENT_PORT;
+const isDev = process.env.NODE_ENV === 'dev';
+const PORT = 3000;
 
 let win = null;
 
@@ -15,17 +17,19 @@ function createWindow() {
     minHeight: 700,
     width: 1840,
     height: 900,
-    titleBarStyle: 'hidden',
-    // webPreferences: {
-    //   preload: join(__dirname, 'preload.js'),
-    // },
+    webPreferences: {
+      preload: join(__dirname, 'preload.js'),
+      enableRemoteModule: true,
+    },
   });
+  win.loadURL(
+    isDev
+      ? `http://localhost:${PORT}`
+      : `file://${join(__dirname, '../dist/index.html')}`,
+  );
 
   if (isDev) {
     win.webContents.openDevTools();
-    win.loadURL(`http://localhost:${PORT}`);
-  } else {
-    win.loadFile(`file://${join('../', 'build', 'index.html')}`);
   }
 }
 
@@ -45,8 +49,5 @@ app.on('window-all-closed', () => {
   }
 });
 
-// ipcMain.on('toMain', (_event, args) => {
-//   console.log(args);
-
-//   win!.webContents.send('fromMain', 'hello from main thread!!!');
-// });
+ipcMain.on('createAuthWindow', (ev, url) => createAuthWindow(win, url));
+ipcMain.on('destroyAuthWindow', () => destroyAuthWindow());

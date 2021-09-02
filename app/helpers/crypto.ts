@@ -81,6 +81,7 @@ export async function encrypt(
   // Generate secret key from imported key
   const derivedKey = await deriveKey(importedKey, salt);
   // Returns ArrayBuffer
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const arrayBuffer = await window.crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
@@ -120,6 +121,7 @@ export async function decrypt(
   ];
   const importedKey = await importKey(password);
   const derivedKey = await deriveKey(importedKey, salt);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const arrayBuffer = await window.crypto.subtle.decrypt(
     {
       name: 'AES-GCM',

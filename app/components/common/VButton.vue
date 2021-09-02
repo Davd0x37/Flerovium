@@ -1,10 +1,10 @@
 <template>
   <button
     :class="[
-      'border rounded p-2.5 mx-5',
+      'text-primary border border-gray-500 rounded p-2.5 mx-5 transition',
       inversed
-        ? 'dark:text-secondary text-primary dark:bg-primary bg-secondary'
-        : 'text-secondary dark:text-primary bg-primary dark:bg-secondary',
+        ? 'bg-secondary hover:bg-secondary-dark'
+        : 'bg-secondary-dark hover:bg-brand',
     ]"
   >
     <v-icon v-if="icon" class="pr-2.5" :icon="icon" />
@@ -12,22 +12,17 @@
   </button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
 import VIcon from '@/components/common/VIcon.vue';
 
-export default defineComponent({
-  name: 'VButton',
-
-  components: {
-    VIcon,
+const _props = withDefaults(
+  defineProps<{
+    icon?: string;
+    inversed?: boolean;
+  }>(),
+  {
+    icon: 'las la-lock',
+    inversed: false,
   },
-
-  props: {
-    icon: { type: String, required: false, default: 'las la-lock' },
-    inversed: { type: Boolean, required: false, default: false },
-  },
-});
+);
 </script>
-
-<style lang="postcss"></style>

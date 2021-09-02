@@ -1,11 +1,11 @@
 <template>
   <div>
-    <ul class="flex flex-row p-2.5 bg-primary dark:bg-secondary rounded">
+    <ul class="flex flex-row p-2.5 bg-secondary-dark rounded">
       <li
         v-for="(tab, index) in tabs"
         :key="tab.title"
         :class="[
-          'text-secondary dark:text-primary p-2.5 mx-2.5 transition rounded cursor-pointer',
+          'text-primary p-2.5 mx-2.5 transition rounded cursor-pointer',
           active == index ? 'bg-brand' : '',
         ]"
         @click="activateTab(index)"
@@ -17,36 +17,21 @@
   </div>
 </template>
 
-<script lang="ts">
-import { ref, provide, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { ref, provide } from 'vue';
 import VTab from './VTab.vue';
 
-export default defineComponent({
-  name: 'VTabs',
+const active = ref(0); // active tab index
+const tabs = ref([] as typeof VTab[]); // array of v-tab instances
 
-  setup() {
-    const active = ref(0); // active tab index
-    const tabs = ref([] as typeof VTab[]); // array of v-tab instances
-
-    // send tabsState to all v-tab instances
-    // it will be sent to all instances inside <slot></slot>
-    provide('tabsState', {
-      tabs,
-      active,
-    });
-
-    return {
-      active,
-      tabs,
-    };
-  },
-
-  methods: {
-    activateTab(id: number) {
-      this.active = id;
-    },
-  },
+// send tabsState to all v-tab instances
+// it will be sent to all instances inside <slot></slot>
+provide('tabsState', {
+  tabs,
+  active,
 });
-</script>
 
-<style lang="postcss"></style>
+function activateTab(id: number) {
+  active.value = id;
+}
+</script>

@@ -6,6 +6,7 @@ export interface RootState {
   darkMode: boolean;
   lang: string;
   isAuth: boolean;
+  searchBox: string;
   encryption: {
     passwordHash: string;
     salt: string;

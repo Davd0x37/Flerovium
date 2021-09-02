@@ -1,47 +1,50 @@
 <template>
   <div class="py-2.5 2xl:w-3/4 sm:w-full text-primary dark:text-secondary">
     <p>{{ title }}</p>
-    <div id="subeditor" ref="editor" :class="[height, 'bg-primary']"></div>
+    <div id="subeditor" ref="container" :class="[height, 'bg-primary']"></div>
+    <!-- <pre>{{modelValue}}</pre> -->
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { onMounted, Ref, ref, unref } from 'vue';
 import JSONEditor, { JSONEditorMode, JSONEditorOptions } from 'jsoneditor';
 
 import 'jsoneditor/dist/jsoneditor.css';
 
-export default defineComponent({
-  name: 'JsonEditor',
+const props = withDefaults(
+  defineProps<{
+    modelValue: unknown;
+    title: string;
 
-  props: {
-    modelValue: { type: Object, required: true },
-    title: { type: String, required: true, default: 'Title' },
-    // 'tree' | 'view' | 'form' | 'code' | 'text' | 'preview'
-    mode: { type: String, required: false, default: 'code' },
-    height: { type: String, required: false, default: 'h-96' },
+    mode?: string; // 'tree' | 'view' | 'form' | 'code' | 'text' | 'preview'
+    height?: string;
+  }>(),
+  {
+    title: 'Title',
+    mode: 'code',
+    height: 'h-96',
   },
+);
 
-  emits: ['update:modelValue'],
+const container = ref<HTMLElement>() as Ref<HTMLElement>;
 
-  mounted() {
-    const container = this.$refs.editor as HTMLElement;
-    const { mode } = this;
-    const options: JSONEditorOptions = {
-      mainMenuBar: true,
-      mode: mode as JSONEditorMode,
+const emits = defineEmits(['update:modelValue']);
 
-      onChangeText: (jsonString: string) => {
-        if (mode === 'code') {
-          this.$emit('update:modelValue', JSON.parse(jsonString));
-        }
-      },
-    };
+onMounted(() => {
+  const { mode } = props;
+  const options: JSONEditorOptions = {
+    mainMenuBar: true,
+    mode: mode as JSONEditorMode,
 
-    const editor = new JSONEditor(container, options);
-    editor.set(this.modelValue);
-  },
+    onChangeText: (jsonString: string) => {
+      if (mode === 'code') {
+        emits('update:modelValue', JSON.parse(jsonString));
+      }
+    },
+  };
+
+  const editor = new JSONEditor(unref(container.value), options);
+  editor.set(props.modelValue);
 });
 </script>
-
-<style lang="postcss"></style>

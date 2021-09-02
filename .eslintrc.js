@@ -15,6 +15,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import'],
   extends: [
     'eslint:recommended',
+    'airbnb-base',
     'airbnb-typescript/base',
     'plugin:vue/vue3-recommended',
     'plugin:@typescript-eslint/recommended',
@@ -40,6 +41,9 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'class-methods-use-this': 'off',
     // FIXME: remove this
-    'no-void': 'off'
+    'no-void': 'off',
+    'no-underscore-dangle': 'off',
+    // FIXME: fix eslint checking vue components with script setup
+    'no-undef': 'off'
   },
 };

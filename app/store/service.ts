@@ -21,16 +21,49 @@ export const useServiceStore = defineStore('service', {
       return Object.values(this.services);
     },
 
+    servicesExist(): boolean {
+      return this.servicesList.length > 0;
+    },
+
+    hasRequestedTokens() {
+      return (name: string) => {
+        const {
+          auth: { hasRequestedTokens },
+        } = this.getService(name);
+
+        return !!hasRequestedTokens;
+      };
+    },
+    hasAccessToken() {
+      return (name: string) => {
+        const {
+          auth: { tokens },
+        } = this.getService(name);
+
+        return !!tokens?.accessToken || !!tokens?.code;
+      };
+    },
+
+    hasCredentials() {
+      return (name: string) => {
+        const {
+          auth: { credentials },
+        } = this.getService(name);
+
+        return credentials.clientId && credentials.clientSecret;
+      };
+    },
+
     getService:
       state =>
       (name: string): Service =>
         state.list[name],
 
     getTokens() {
-      return (serviceName: string) => {
+      return (name: string) => {
         const {
           auth: { tokens },
-        } = this.getService(serviceName);
+        } = this.getService(name);
 
         return tokens;
       };
@@ -83,8 +116,8 @@ export const useServiceStore = defineStore('service', {
       };
     },
 
-    updateTokens(serviceName: string, tokens: Service['auth']['tokens']): void {
-      const { auth } = this.getService(serviceName);
+    updateTokens(name: string, tokens: Service['auth']['tokens']): void {
+      const { auth } = this.getService(name);
 
       auth.tokens = {
         ...auth.tokens,
@@ -92,8 +125,8 @@ export const useServiceStore = defineStore('service', {
       };
     },
 
-    toggleRequestedTokens(serviceName: string): void {
-      const { auth } = this.getService(serviceName);
+    toggleRequestedTokens(name: string): void {
+      const { auth } = this.getService(name);
 
       auth.hasRequestedTokens = !auth.hasRequestedTokens;
     },

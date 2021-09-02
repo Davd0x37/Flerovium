@@ -1,9 +1,10 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
-import Home from '@/pages/Home.vue';
+import Home from '@/views/Home.vue';
 import checkAuth from '@/middlewares/checkAuth';
-import profile from './profile';
 import services from './services';
 import welcome from './welcome';
+import GlobalStore from '@/views/Store.vue';
+import Authorize from '@/views/Authorize.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,18 +17,26 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/store',
+    name: 'GlobalStore',
+    component: GlobalStore,
+    meta: {
+      inSidebar: true,
+      icon: 'las la-memory',
+    },
+  },
+  {
     path: '/authorize',
     name: 'ServiceAuthorize',
-    component: () => import('@/pages/Authorize.vue'),
+    component: Authorize,
     children: [
       {
         path: ':name',
         name: 'ServiceAuth',
-        component: () => import('@/pages/Authorize.vue'),
+        component: Authorize,
       },
     ],
   },
-  ...profile,
   ...services,
   ...welcome,
 ];

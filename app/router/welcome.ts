@@ -1,19 +1,22 @@
 import { RouteRecordRaw } from 'vue-router';
 
+import WelcomeDefault from '@/views/Welcome/Default.vue';
+import WelcomeOpen from '@/views/Welcome/Open.vue';
+import WelcomeCreate from '@/views/Welcome/Create.vue';
+
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/welcome',
     name: 'WelcomeDefault',
-    component: () => import('@/pages/Welcome/Default.vue'),
+    path: '/welcome',
+    component: WelcomeDefault,
     meta: {
-      layout: 'WelcomeLayout',
       isAuth: true,
     },
     children: [
       {
         name: 'WelcomeOpen',
         path: 'open',
-        component: () => import('@/pages/Welcome/Open.vue'),
+        component: WelcomeOpen,
         meta: {
           isAuth: true,
         },
@@ -21,7 +24,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'WelcomeCreate',
         path: 'create',
-        component: () => import('@/pages/Welcome/Create.vue'),
+        component: WelcomeCreate,
         meta: {
           isAuth: true,
         },

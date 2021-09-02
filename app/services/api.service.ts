@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import debug from 'debug';
+import { get } from 'lodash';
 import { hasTokens, tokensExpired } from '@/helpers/oauth';
 import { GET_REDIRECT_URI } from '@/helpers/utils';
 import { useServiceStore } from '@/store/service';
@@ -11,14 +12,14 @@ import { Selector } from '@/types/common';
 
 const runSelector = (obj: Selector, { detail, arrayLimit }: Data): string => {
   if (Array.isArray(obj)) {
-    const selected = obj.flatMap(record => record[detail]);
+    const selected = obj.flatMap(record => get(record, detail));
 
     return arrayLimit
       ? selected.slice(0, arrayLimit).join(', ')
       : selected.join(', ');
   }
 
-  return obj[detail];
+  return get(obj, detail);
 };
 
 const selectData = (
@@ -30,7 +31,7 @@ const selectData = (
 
     const selected = runSelector(obj, selector);
 
-    const detail = matcher ? (matcher[selected] as string) : selected;
+    const detail = matcher ? (get(matcher, selected) as string) : selected;
 
     return {
       label,
@@ -193,5 +194,25 @@ export class ApiService {
       }
       throw new Error(`[ApiService] RequestData - Throw ERROR`);
     }
+  }
+
+  async refreshService(name: string): Promise<void> {
+    const store = useServiceStore();
+    if (store.hasRequestedTokens(name)) {
+      const service = store.getService(name);
+      const data = await this.requestData(service);
+
+      store.updateService({
+        ...service,
+        data,
+      });
+    }
+  }
+
+  async refreshServices(): Promise<void> {
+    const store = useServiceStore();
+    await Promise.any(
+      store.servicesList.map(service => this.refreshService(service.name)),
+    );
   }
 }

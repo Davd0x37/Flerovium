@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+
 import { RootState, ServiceState } from '@/types/store';
 import builtinServices from '@/common/builtinServices';
 import { useServiceStore } from './service';
@@ -13,6 +14,7 @@ export const useStore = defineStore('main', {
       isAuth: false,
       lang: 'en',
       darkMode: true,
+      searchBox: '',
       encryption: {
         passwordHash: '',
         salt: '',
@@ -23,6 +25,7 @@ export const useStore = defineStore('main', {
     vaultName: state => state.name,
     isAuthenticated: state => state.isAuth,
     isDarkMode: state => state.darkMode,
+    search: state => state.searchBox,
     language: state => state.lang,
     vault: state => state,
   },
@@ -38,6 +41,10 @@ export const useStore = defineStore('main', {
 
     changeLanguage(lang: string) {
       this.lang = lang;
+    },
+
+    setSearch(val: string) {
+      this.searchBox = val;
     },
 
     createVault(

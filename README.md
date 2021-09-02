@@ -5,6 +5,10 @@
 - Remove JSON Editor
 - Add better error handling
 - Add GitHub Actions
+- Fix dynamic imports in electron
+- Add traefik
+- Fix docker builds
+- Use keytar in electron
 - Fix encryption. Don't store unencrypted data in localStorage
 - Rewrite some components because they're ugly af
 - Add generating forms based on store structure? (Add type in store schema and generate fields based on that schema). <br>
@@ -55,38 +59,45 @@ Install packages
 yarn install
 ```
 
-Build web client
+Build web client and electron
 
 ```
 yarn run build
 ```
 
-Build web client with formatting and linting before
-
-```
-yarn run build:prod
-```
-
-Using docker
+<!-- Using docker
 
 ```
 ./scripts/build.sh
-```
+``` -->
 
 ## Build dev
 
-Run development version
+Run development version - web
 
 ```
 yarn run dev
 ```
 
-## Run
+Run development version - electron
 
-Run from docker (if image was already been built)
+```
+yarn run electron:dev
+```
+
+<!-- ## Run
+
+Only web
+Run from podman (if image was already been built)
 
 ```
 ./scripts/run.sh
+```
+
+Docker version
+
+```
+./scripts/run.sh docker
 ```
 
 Otherwise
@@ -95,3 +106,10 @@ Otherwise
 ./scripts/build.sh
 ./scripts/run.sh
 ```
+
+Docker version
+
+```
+./scripts/build.sh docker
+./scripts/run.sh docker
+``` -->

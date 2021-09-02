@@ -3,4 +3,5 @@
  */
 export const IV_LEN = 16;
 
-export const APP_URL = 'http://localhost:3000';
+// How long notification should be displayed - in ms
+export const NOTIFICATION_TIME = 2000;

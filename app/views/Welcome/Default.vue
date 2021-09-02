@@ -17,29 +17,23 @@
     </div>
 
     <div class="mt-5">
-      <router-view :key="$route.fullPath" />
+      <router-view :key="route.fullPath" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import VIcon from '@/components/common/VIcon.vue';
 import LocaleChanger from '@/components/LocaleChanger.vue';
 
-export default defineComponent({
-  name: 'WelcomeDefault',
-  components: {
-    VIcon,
-    LocaleChanger,
-  },
+const route = useRoute();
+const router = useRouter();
 
-  created() {
-    void this.$router.push({
-      name: 'WelcomeOpen',
-    });
-  },
+onMounted(() => {
+  void router.push({
+    name: 'WelcomeOpen',
+  });
 });
 </script>
-
-<style lang="postcss" scoped></style>
