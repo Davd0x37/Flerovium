@@ -1,12 +1,6 @@
 <template>
   <div
-    class="
-      grid grid-cols-header
-      justify-items-center
-      items-center
-      h-20
-      text-primary
-    "
+    class="grid grid-cols-header justify-items-center items-center h-20 text-primary"
   >
     <div>
       <i class="las la-2x la-ellipsis-h"></i>
@@ -20,18 +14,7 @@
       <input
         id="search"
         v-model="search"
-        class="
-          font-bold
-          uppercase
-          py-2.5
-          px-5
-          w-full
-          rounded
-          border border-none
-          text-brand
-          placeholder-brand
-          bg-gray-700
-        "
+        class="font-bold uppercase py-2.5 px-5 w-full rounded border border-none text-brand placeholder-brand bg-gray-700"
         type="text"
         name="search"
         :placeholder="$t('header.search')"

@@ -1,14 +1,7 @@
 <template>
   <div>
     <div
-      class="
-        text-primary
-        bg-secondary-dark
-        font-display
-        flex flex-col
-        h-full
-        min-h-screen min-w-min
-      "
+      class="text-primary bg-secondary-dark font-display flex flex-col h-full min-h-screen min-w-min"
     >
       <component :is="isAuth ? DefaultLayout : WelcomeLayout"></component>
     </div>

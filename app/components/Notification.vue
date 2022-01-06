@@ -27,10 +27,13 @@ import { useNotificationStore } from '@/store/notification';
 const store = useNotificationStore();
 const notifications = computed(() => store.notifications);
 
-store.$subscribe((mutation, state) => {
-  debug('mutation')(mutation);
-  debug('state')(state);
-}, true);
+store.$subscribe(
+  (mutation, state) => {
+    debug('mutation')(mutation);
+    debug('state')(state);
+  },
+  { detached: true },
+);
 
 function classMode(mode: NotificationMode) {
   const modes = {

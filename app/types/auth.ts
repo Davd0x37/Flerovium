@@ -30,12 +30,12 @@ export interface AuthParameters {
   // Generated token/word/something that will be used to verify received tokens
   // from service
   state: string;
-  // API Path where codes are exchanged for tokens
+  // server Path where codes are exchanged for tokens
   tokenEndpointUri: string;
 }
 
 export interface TokenParameters {
-  // Access token required to make API calls to service
+  // Access token required to make server calls to service
   accessToken: string;
   // Bearer, Basic etc.
   tokenType: string;

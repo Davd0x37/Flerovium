@@ -2,17 +2,7 @@
   <div>
     <label
       for="file"
-      class="
-        border
-        rounded
-        p-2.5
-        mx-5
-        flex flex-row
-        items-center
-        cursor-pointer
-        text-primary-dark
-        bg-gray-700
-      "
+      class="border rounded p-2.5 mx-5 flex flex-row items-center cursor-pointer text-primary-dark bg-gray-700"
     >
       <v-icon v-if="!spin" class="pr-2.5" icon="las la-lock" />
 
