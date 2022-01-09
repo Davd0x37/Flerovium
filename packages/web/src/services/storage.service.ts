@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Buffer } from 'buffer';
 import { debug } from 'debug';
-import { decrypt, encrypt } from '@/helpers/crypto';
+import init, { DerivKey, decrypt, encrypt } from 'cryfler';
 import { generateDownloadUrl } from '@/helpers/fs';
 import { useStore } from '@/store/main';
 import { FileSchema, URLDownload } from '@/types/fs';
@@ -17,7 +17,7 @@ export class StorageService {
       const serviceStore = useServiceStore();
 
       const {
-        encryption: { passwordHash, salt },
+        encryption: { passwordHash },
       } = store.vault;
 
       const convertedStore = {
@@ -25,26 +25,22 @@ export class StorageService {
         serviceStore: serviceStore.$state,
       };
 
-      // First step: convert object to JSON and save it as Buffer/UInt8Array
-      // We use Buffer because converting JSONObject to utf-8 using TextEncoder is bad
-      // Values above 128 and below 255 creates additional random values
-      // which leads to data corruption and in return we get not exact data we didn't saved
-      const restAB = Buffer.from(JSON.stringify(convertedStore));
-      // Second step: encrypt converted buffer
-      const restABEncrypted = await encrypt(restAB, passwordHash);
-      // Third step: convert arraybuffer to hex
-      const restAsHex = Buffer.from(restABEncrypted).toString('hex');
+      const key = DerivKey.derive_key(passwordHash);
+      const hash = key.get_hash();
+      const salt = key.get_salt();
 
-      // Fourth step: salt doesn't have to be secret, so it doesn't need to be encrypted
+      const restAB = JSON.stringify(convertedStore);
+      // encrypt converted buffer
+      const data = encrypt(restAB, hash);
+
+      // salt doesn't have to be secret, so it doesn't need to be encrypted
       // We need salt to generate a new hash used to decrypt the vault
       const contentRaw: FileSchema = {
-        encryption: {
-          salt,
-        },
-        data: restAsHex,
+        encryption: { salt },
+        data,
       };
 
-      // Fifth step: save configuration and encrypted data in buffer then convert it to hex
+      // save configuration and encrypted data in buffer then convert it to hex
       const encryptedContent = Buffer.from(JSON.stringify(contentRaw)).toString(
         'hex',
       );
@@ -60,6 +56,7 @@ export class StorageService {
       // if (error instanceof Error) {
       debug('[StorageService]')(`DownloadVault: ${error}`);
       // }
+      console.error(error);
       throw new Error('[StorageService] DownloadVault');
     }
   }
@@ -81,14 +78,12 @@ export class StorageService {
       // 4: Create new hash using raw password and old salt
       const [_, encoded] = await Argon2.hash(rawPassword, encryption.salt);
 
-      // 5: Convert encrypted data from hex to UInt8Array
-      const dataFromHex = Buffer.from(data, 'hex');
-      // 6: Decrypt with newly generated hash
-      const decryptedAB = await decrypt(dataFromHex, encoded);
-      // 7: Convert from UInt8Array to utf-8
+      // 5: Decrypt with newly generated hash
+      const decryptedAB = await decrypt(data, encoded);
+      // 6: Convert from UInt8Array to utf-8
       const decrypted = Buffer.from(decryptedAB).toString('utf-8');
 
-      // Finally, we can parse decrypted data as its format is known
+      // we can parse decrypted data as its format is known
       const vault = JSON.parse(decrypted) as ConvertedStore;
 
       const convertedStore = {

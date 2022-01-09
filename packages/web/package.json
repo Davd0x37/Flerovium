@@ -1,5 +1,5 @@
 {
-  "name": "flerovium",
+  "name": "flerovium_web",
   "version": "0.0.4",
   "description": "Flerovium web client",
   "author": "David",
@@ -27,6 +27,7 @@
     "argon2-browser": "^1.18.0",
     "axios": "^0.24.0",
     "buffer": "6.0.3",
+    "cryfler": "^0.1.0",
     "debug": "^4.3.3",
     "jsoneditor": "^9.5.11",
     "pinia": "^2.0.9",

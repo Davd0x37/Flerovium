@@ -1,0 +1,19 @@
+{
+  "name": "flerovium",
+  "version": "0.0.4",
+  "description": "Flerovium app",
+  "author": "David",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Davd0x37/Flerovium.git"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@3.1.1"
+}

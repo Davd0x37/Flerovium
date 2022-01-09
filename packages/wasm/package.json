@@ -1,0 +1,16 @@
+{
+  "name": "cryfler",
+  "collaborators": [
+    "Davd0x37 <holgrin@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "private": true,
+  "files": [
+    "pkg/cryfler_bg.wasm",
+    "pkg/cryfler.js",
+    "pkg/cryfler.d.ts"
+  ],
+  "module": "pkg/cryfler.js",
+  "types": "pkg/cryfler.d.ts",
+  "sideEffects": false
+}

@@ -9,7 +9,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
+import init from 'cryfler';
 
 import { useStore } from './store/main';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
@@ -17,6 +18,10 @@ import WelcomeLayout from '@/layouts/WelcomeLayout.vue';
 
 const store = useStore();
 const isAuth = computed(() => store.isAuthenticated);
+
+onMounted(async () => {
+  await init();
+});
 </script>
 
 <style lang="postcss">
