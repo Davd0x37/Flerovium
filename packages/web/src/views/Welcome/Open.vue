@@ -59,14 +59,14 @@ watch(
   },
 );
 
-async function open() {
+function open() {
   try {
     // Clear storage
     localStorage.clear();
 
-    await StorageService.openVault(unref(payload.value), unref(password.value));
+    StorageService.openVault(unref(payload.value), unref(password.value));
 
-    void router.push({ name: 'Home' });
+    router.push({ name: 'Home' }).catch(() => {});
   } catch (error) {
     if (error instanceof Error) {
       debug('[WelcomeOpen]')(`Open: ${error.message}`);

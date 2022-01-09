@@ -1,3 +1,5 @@
+import { RootState } from "./store";
+
 export interface FileReadHandlers {
   onload: (result: string, event: ProgressEvent<FileReader>) => void;
   onerror: (event: ProgressEvent<FileReader>) => void;
@@ -11,8 +13,6 @@ export interface URLDownload {
 }
 
 export interface FileSchema {
-  encryption: {
-    salt: string;
-  };
+  encryption: Pick<RootState, 'encryption'>["encryption"];
   data: string;
 }

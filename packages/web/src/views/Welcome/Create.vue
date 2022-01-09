@@ -45,11 +45,11 @@
 import { ref, reactive, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import useVuelidate from '@vuelidate/core';
+import { DerivKey } from 'cryfler';
 import { same as sameAs } from '@/i18n/validators';
 
 import VInput from '@/components/common/VInput.vue';
 import VButton from '@/components/common/VButton.vue';
-import { Argon2 } from '@/helpers/hash';
 import { useStore } from '@/store/main';
 import { useNotificationStore } from '@/store/notification';
 
@@ -82,25 +82,26 @@ watch(
   },
 );
 
-async function save(): Promise<void> {
+function save(): void {
   try {
     // Clear storage
     localStorage.clear();
 
-    // @TODO: Move this to store actions?
-    const [salt, encoded] = await Argon2.hash(fields.password);
+    const key = DerivKey.derive_key(fields.password);
+    
     const payload = {
       useBuiltin: fields.useBuiltin,
       name: fields.name,
       encryption: {
-        passwordHash: encoded,
-        salt,
+        raw: key.get_raw(),
+        hash: key.get_hash(),
+        salt: key.get_salt(),
       },
     };
 
     store.createVault(payload);
 
-    await router.push({ name: 'Home' });
+    router.push({ name: 'Home' }).catch(() => {});
   } catch (err) {
     if (err instanceof Error) {
       notif.showNotification({

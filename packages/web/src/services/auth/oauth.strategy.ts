@@ -10,6 +10,7 @@ import {
 import { AuthBaseStrategy } from './base.strategy';
 import { generateRandomString } from '@/helpers/random';
 import { hash } from '@/helpers/hash';
+import {sha256} from "cryfler";
 import { base64urlencode } from '@/helpers/utils';
 import { RequestService } from '../request.service';
 
@@ -91,8 +92,8 @@ export class OAuthStrategy extends AuthBaseStrategy {
     return array;
   }
 
-  public async generateCodeChallenge(codeVerifier: string): Promise<string> {
-    const hashedVerifier = await hash(codeVerifier);
+  public generateCodeChallenge(codeVerifier: string): string {
+    const hashedVerifier = sha256(codeVerifier);
     const encoded = base64urlencode(hashedVerifier);
 
     return encoded;

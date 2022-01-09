@@ -11,7 +11,7 @@ use wasm_bindgen::prelude::*;
 pub fn encrypt(input: &str, key: &str) -> String {
     // decode key saved as hex value - must be decoded otherwise using .as_bytes will
     // parse every character as separate byte and in result we get 2x larger array
-    let key = hex::decode(&key[..]).expect("Failed decoding hex to bytes");
+    let key = hex::decode(key).expect("Failed decoding hex to bytes");
     let key = Key::from_slice(&key);
 
     // create cipher instance
@@ -40,7 +40,7 @@ pub fn encrypt(input: &str, key: &str) -> String {
 pub fn decrypt(input: &str, key: &str) -> String {
     let input = hex::decode(input).expect("Error while decoding hex");
     // decode key saved as hex - 2x larger array if not decoded
-    let key = hex::decode(&key[..]).expect("Failed decoding hex to bytes");
+    let key = hex::decode(key).expect("Failed decoding hex to bytes");
 
     let key = Key::from_slice(&key);
     let aead = XChaCha20Poly1305::new(key);

@@ -32,7 +32,16 @@ impl DerivKey {
     }
 
     pub fn derive_key(input: &str) -> Self {
-        let salt = SaltString::generate(&mut OsRng);
+        let salt = DerivKey::generate_salt();
+
+        DerivKey::derive_key_with_salt(input, salt.as_ref())
+    }
+
+    pub fn generate_salt() -> String {
+        SaltString::generate(&mut OsRng).as_str().to_owned()
+    }
+
+    pub fn derive_key_with_salt(input: &str, salt: &str) -> Self {
         let argon2 = Argon2::default();
 
         let raw_hash = argon2

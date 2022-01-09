@@ -1,42 +1,35 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Buffer } from 'buffer';
 import { debug } from 'debug';
-import init, { DerivKey, decrypt, encrypt } from 'cryfler';
+import { DerivKey, decrypt, encrypt } from 'cryfler';
 import { generateDownloadUrl } from '@/helpers/fs';
 import { useStore } from '@/store/main';
 import { FileSchema, URLDownload } from '@/types/fs';
 import { ConvertedStore, RootState } from '@/types/store';
-import { Argon2 } from '@/helpers/hash';
 import { useServiceStore } from '@/store/service';
 
 export class StorageService {
-  static async downloadVault(vault: RootState): Promise<URLDownload> {
+  static downloadVault(vault: RootState): URLDownload {
     try {
       // @FIXME: change to single store
       const store = useStore();
       const serviceStore = useServiceStore();
 
-      const {
-        encryption: { passwordHash },
-      } = store.vault;
+      const { encryption } = store.vault;
 
       const convertedStore = {
         store: store.$state,
         serviceStore: serviceStore.$state,
       };
 
-      const key = DerivKey.derive_key(passwordHash);
-      const hash = key.get_hash();
-      const salt = key.get_salt();
-
       const restAB = JSON.stringify(convertedStore);
       // encrypt converted buffer
-      const data = encrypt(restAB, hash);
+      const data = encrypt(restAB, encryption.hash);
 
       // salt doesn't have to be secret, so it doesn't need to be encrypted
       // We need salt to generate a new hash used to decrypt the vault
       const contentRaw: FileSchema = {
-        encryption: { salt },
+        encryption,
         data,
       };
 
@@ -61,7 +54,7 @@ export class StorageService {
     }
   }
 
-  static async openVault(payload: string, rawPassword: string): Promise<void> {
+  static openVault(payload: string, password: string): void {
     try {
       const store = useStore();
 
@@ -75,11 +68,13 @@ export class StorageService {
       // 3: We get the encryption configuration and our encrypted data
       const { encryption, data } = encryptedParsed;
 
-      // 4: Create new hash using raw password and old salt
-      const [_, encoded] = await Argon2.hash(rawPassword, encryption.salt);
+      const verify = DerivKey.verify_key(password, encryption.raw);
+      if (!verify) {
+        throw new Error('[Storage Service] Incorrect password!');
+      }
 
       // 5: Decrypt with newly generated hash
-      const decryptedAB = await decrypt(data, encoded);
+      const decryptedAB = decrypt(data, encryption.hash);
       // 6: Convert from UInt8Array to utf-8
       const decrypted = Buffer.from(decryptedAB).toString('utf-8');
 
@@ -96,6 +91,7 @@ export class StorageService {
       // if (error instanceof Error) {
       debug('[StorageService]')(`OpenVault: ${error}`);
       // }
+      console.error(error);
       throw new Error('[StorageService] OpenVault');
     }
   }

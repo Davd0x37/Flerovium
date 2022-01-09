@@ -8,7 +8,8 @@ export interface RootState {
   isAuth: boolean;
   searchBox: string;
   encryption: {
-    passwordHash: string;
+    raw: string;
+    hash: string;
     salt: string;
   };
 }

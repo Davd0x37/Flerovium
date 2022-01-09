@@ -7,7 +7,7 @@ wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
 fn test_derive_key() {
-    use wasm::crypto::deriv_key::DerivKey;
+    use cryfler::crypto::deriv_key::DerivKey;
 
     let password = "secretP44sw0rd";
     let mut derived_key = DerivKey::derive_key(&password);
